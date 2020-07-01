@@ -2,6 +2,7 @@ package ibm.gse.eda.api;
 
 import static ibm.gse.eda.api.MongoDbContainer.MONGODB_HOST;
 import static ibm.gse.eda.api.MongoDbContainer.MONGODB_PORT;
+import static ibm.gse.eda.api.MongoDbContainer.MONGODB_MAPPED_PORT;
 import static io.restassured.config.LogConfig.logConfig;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +36,7 @@ public class OrderResourceTest {
     @Container
     static GenericContainer MONGO_DB_CONTAINER = new MongoDbContainer()
             .withCreateContainerCmdModifier(cmd -> cmd.withHostName(MONGODB_HOST)
-                    .withPortBindings(new PortBinding(Ports.Binding.bindPort(MONGODB_PORT), new ExposedPort(MONGODB_PORT))));
+                    .withPortBindings(new PortBinding(Ports.Binding.bindPort(MONGODB_PORT), new ExposedPort(MONGODB_MAPPED_PORT))));
 
     @BeforeAll
     static void initAll() {

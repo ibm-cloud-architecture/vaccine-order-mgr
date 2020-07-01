@@ -1,6 +1,6 @@
 # Vaccine-order-mgr project
 
-See explanation of this application in [this article]()
+See explanation of this application in [this article](https://pages.github.ibm.com/vaccine-cold-chain/vaccine-cold-chain-main/solution/orderms/)
 
 ## Running the application in dev mode
 

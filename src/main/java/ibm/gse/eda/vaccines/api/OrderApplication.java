@@ -1,4 +1,4 @@
-package ibm.gse.eda.api;
+package ibm.gse.eda.vaccines.api;
 
 import javax.ws.rs.core.Application;
 
@@ -10,10 +10,10 @@ import org.eclipse.microprofile.openapi.annotations.info.License;
 @OpenAPIDefinition(
     info = @Info(
         title="Vaccine Order Manager API",
-        version = "1.0.0",
+        version = "0.0.1",
         contact = @Contact(
             name = "IBM Garage Solution Engineering",
-            url = "http://github.com/ibm-cloud-architecture"),
+            url = "http://github.com/ibm-cloud-architecture/vaccine-order-mgr"),
         license = @License(
             name = "Apache 2.0",
             url = "http://www.apache.org/licenses/LICENSE-2.0.html"))

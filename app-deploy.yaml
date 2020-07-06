@@ -1,0 +1,88 @@
+apiVersion: appsody.dev/v1beta1
+kind: AppsodyApplication
+metadata:
+  annotations:
+    cekit.io/version: 3.6.0
+    commit.image.appsody.dev/date: Wed Jul 1 08:09:02 2020 -0700
+    commit.image.appsody.dev/message: Tune tests
+    graalvm-archive-filename: graalvm-ce-linux-amd64-19.3.1-java8.tar.gz
+    graalvm-archive-url: https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-19.3.1/graalvm-ce-java8-linux-amd64-19.3.1.tar.gz
+    graalvm-version: java8-19.3.1
+    image.opencontainers.org/created: "2020-07-02T17:50:19-07:00"
+    image.opencontainers.org/documentation: https://github.ibm.com/vaccine-cold-chain/vaccine-order-mgr
+    image.opencontainers.org/revision: 41a3e81ec68c2ed35db397eac0144e39a8fd4b03-modified
+    image.opencontainers.org/source: https://github.ibm.com/vaccine-cold-chain/vaccine-order-mgr/tree/master
+    image.opencontainers.org/url: https://github.ibm.com/vaccine-cold-chain/vaccine-order-mgr
+    k8s.io/description: Quarkus.io builder image for building Quarkus applications.
+    k8s.io/display-name: Centos + GraalVM + Maven Image
+    maintainer: Quarkus Team <quarkus-dev@googlegroups.com>
+    openshift.io/expose-services: 8080:http
+    openshift.io/tags: builder,java,quarkus
+    org/label-schema.build-date: "20200504"
+    org/label-schema.license: GPLv2
+    org/label-schema.name: CentOS Base Image
+    org/label-schema.schema-version: "1.0"
+    org/label-schema.vendor: CentOS
+    stack.appsody.dev/authors: jerome boyer <>
+    stack.appsody.dev/configured: dev.local/appsody/ibm-gse-eda-quarkus:0.4.1
+    stack.appsody.dev/created: "2020-07-02T17:19:58-07:00"
+    stack.appsody.dev/description: Quarkus 1.5.3 runtime for running Java applications
+    stack.appsody.dev/licenses: Apache-2.0
+    stack.appsody.dev/tag: dev.local/appsody/ibm-gse-eda-quarkus:0.4.1
+    stack.appsody.dev/title: IBM_GSE_EDA_Quarkus
+    stack.appsody.dev/vendor: CentOS
+  creationTimestamp: null
+  labels:
+    image.opencontainers.org/title: vaccine-order-mgr
+    stack.appsody.dev/id: ibm-gse-eda-quarkus
+    stack.appsody.dev/version: 0.4.1
+  name: vaccine-order-mgr
+  namespace: vaccine-cold-chain
+spec:
+  applicationImage: default-route-openshift-image-registry.gse-eda-demo-202005-fa9ee67c9ab6a7791435450358e564cc-0000.us-south.containers.appdomain.cloud/vaccine-cold-chain/vaccine-order-mgr:0.0.1
+  createKnativeService: false
+  env:
+  - name: KAFKA_BROKERS
+    valueFrom:
+      configMapKeyRef:
+        key: kafka-brokers
+        name: vaccine-cmap
+  - name: SSLJDBCURL
+    valueFrom:
+      configMapKeyRef:
+        key: SSLJDBCURL
+        name: vaccine-cmap
+  - name: KAFKA_APIKEY
+    valueFrom:
+      secretKeyRef:
+        key: binding
+        name: es-cp4i-apikey
+        optional: true
+  - name: TRUSTSTORE_ENABLED
+    value: "true"
+  - name: CERT_LOCATION
+    value: /deployments/certs/es-cert.jks
+  expose: true
+  livenessProbe:
+    failureThreshold: 12
+    httpGet:
+      path: /health/live
+      port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 2
+  monitoring:
+    labels:
+      k8s-app: vaccine-order-mgr
+  readinessProbe:
+    failureThreshold: 12
+    httpGet:
+      path: /health/ready
+      port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 2
+    timeoutSeconds: 1
+  service:
+    port: 8080
+    type: NodePort
+  stack: quarkus
+  version: 1.0.0

@@ -1,10 +1,9 @@
-package ibm.gse.eda.api.dto;
+package ibm.gse.eda.vaccines.api.dto;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import ibm.gse.eda.vaccines.domain.OrderStatus;
@@ -13,7 +12,7 @@ import ibm.gse.eda.vaccines.domain.VaccineOrderEntity;
 @Schema(name = "VaccineOrder", description = "Vaccine order to be delivered in a state or a country")
 public class VaccineOrder {
     @Schema(required = false, description = "Unique order identifier, will be generated")
-    public String id;
+    public Long id;
     @Schema(required = true, description = "Location for vaccine lots to be delivered")
     public String deliveryLocation;
     @Schema(required = false,
@@ -29,7 +28,7 @@ public class VaccineOrder {
 
     public VaccineOrder(){}
 
-    public VaccineOrder(String idIn, String deliveryLocation, Long quantity, Integer p, LocalDate delivery, OrderStatus status) {
+    public VaccineOrder(Long idIn, String deliveryLocation, Long quantity, Integer p, LocalDate delivery, OrderStatus status) {
         this.id = idIn;
         this.deliveryLocation = deliveryLocation;
         this.quantity = quantity;
@@ -50,7 +49,7 @@ public class VaccineOrder {
 	public static VaccineOrderEntity toEntity(VaccineOrder order) {
         VaccineOrderEntity entity = new VaccineOrderEntity();
         if (order.id != null) {
-            entity.id = new ObjectId(order.id);
+            entity.id = order.id;
         }
         entity.deliveryLocation = order.deliveryLocation;
         entity.quantity = order.quantity;
@@ -61,7 +60,7 @@ public class VaccineOrder {
 	}
 
 	public static VaccineOrder fromEntity(VaccineOrderEntity entity) {
-        VaccineOrder vo = new VaccineOrder(entity.id.toString(), entity.deliveryLocation, entity.quantity,entity.priority, entity.deliveryDate, entity.status);
+        VaccineOrder vo = new VaccineOrder(entity.id, entity.deliveryLocation, entity.quantity,entity.priority, entity.deliveryDate, entity.status);
 		return vo;
 	}
 

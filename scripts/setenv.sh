@@ -1,3 +1,5 @@
-export USERNAME=admin
-export PASSWORD=admin
-export quarkus.mongodb.connection-string="mongodb://$USERNAME:$PASSWORD@3b3e7075-998c-46c0-9a80-d44e37def923-0.d7deeff0d58745aba57fa5c84685d5b4.databases.appdomain.cloud:30240,3b3e7075-998c-46c0-9a80-d44e37def923-1.d7deeff0d58745aba57fa5c84685d5b4.databases.appdomain.cloud:30240/ibmclouddb?authSource=admin&replicaSet=replset"
+export DBPWD=6p9nck083d-qb2ld
+export SSLJDBCURL=jdbc:db2://dashdb-txn-sbox-yp-dal09-10.services.dal.bluemix.net:50001/BLUDB:sslConnection=true;
+export DBUSER=gcx70743
+export KAFKA_APIKEY=nAKk_UR_3592tlzJe-Vv9CBQC7dEl78UZJrfPIoFZN7j
+export KAFKA_BROKERS=broker-0-qnprtqnp7hnkssdz.kafka.svc01.us-east.eventstreams.cloud.ibm.com:9093,broker-1-qnprtqnp7hnkssdz.kafka.svc01.us-east.eventstreams.cloud.ibm.com:9093,broker-2-qnprtqnp7hnkssdz.kafka.svc01.us-east.eventstreams.cloud.ibm.com:9093,broker-3-qnprtqnp7hnkssdz.kafka.svc01.us-east.eventstreams.cloud.ibm.com:9093,broker-4-qnprtqnp7hnkssdz.kafka.svc01.us-east.eventstreams.cloud.ibm.com:9093,broker-5-qnprtqnp7hnkssdz.kafka.svc01.us-east.eventstreams.cloud.ibm.com:9093

@@ -2,17 +2,18 @@ package ibm.gse.eda.vaccines.domain;
 
 import java.time.LocalDate;
 
-import io.quarkus.mongodb.panache.MongoEntity;
-import io.quarkus.mongodb.panache.PanacheMongoEntity;
+import javax.persistence.Entity;
 
-@MongoEntity(collection="TheOrder")
-public class VaccineOrderEntity extends PanacheMongoEntity {
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
+
+@Entity
+public class VaccineOrderEntity extends PanacheEntity {
     public String deliveryLocation;
     public Integer priority = 0;
     public Long quantity; 
     public LocalDate deliveryDate;
     public OrderStatus status;
-    public LocalDate creationDate;
+    public String creationDate;
 
 	public static VaccineOrderEntity findByDestination(String destination) {
 		return find("deliveryLocation", destination).firstResult();

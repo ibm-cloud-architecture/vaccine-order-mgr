@@ -1,0 +1,12 @@
+apiVersion: ibmcloud.ibm.com/v1alpha1
+kind: Topic
+metadata:
+  name: orders
+  namespace: cp4i
+spec:
+  partitions: 3
+  replicas: 3
+  topicName: orders
+  config:
+    retention.ms: 7200000
+    segment.bytes: 1073741824

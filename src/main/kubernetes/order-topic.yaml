@@ -1,5 +1,5 @@
-apiVersion: ibmcloud.ibm.com/v1alpha1
-kind: Topic
+apiVersion: eventstreams.ibm.com/v1beta1
+kind: KafkaTopic
 metadata:
   name: orders
   namespace: cp4i

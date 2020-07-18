@@ -35,5 +35,8 @@ pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
 
+# Application specific
 certs/
+.env
+db2data/
 scripts/setenv.sh

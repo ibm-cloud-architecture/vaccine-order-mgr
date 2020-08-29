@@ -28,11 +28,13 @@ public class VaccineOrder {
 
     public VaccineOrder(){}
 
-    public VaccineOrder(Long idIn, String deliveryLocation, Long quantity, Integer p, LocalDate delivery, OrderStatus status) {
+    public VaccineOrder(Long idIn, String deliveryLocation, 
+            Long quantity, Integer priority, 
+            LocalDate delivery, OrderStatus status) {
         this.id = idIn;
         this.deliveryLocation = deliveryLocation;
         this.quantity = quantity;
-        this.priority = p;
+        this.priority = priority;
         this.deliveryDate = delivery;
         this.status = status;
     }

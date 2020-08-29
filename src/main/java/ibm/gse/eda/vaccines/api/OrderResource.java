@@ -31,6 +31,7 @@ public class OrderResource {
     public List<VaccineOrder> getActiveOrders() {
         return VaccineOrder.fromAll(VaccineOrderEntity.listAll(Sort.by("deliveryLocation")));
     }
+    
   /**
      * Find an entity of this type by ID.
      *
@@ -84,6 +85,7 @@ public class OrderResource {
         orderEntity.deliveryDate = order.deliveryDate;
         return order;
     }
+
 
     @DELETE
     @Path("/{id}")

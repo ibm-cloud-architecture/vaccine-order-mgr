@@ -1,10 +1,9 @@
 # Vaccine Order Manager event-driven microservice
 
-See explanation of this service in [this article](https://github.com/ibm-cloud-architecture/vaccine-solution-main/solution/orderms/).
+This service is responsible to manage the Vaccine Order entity. It is done with Smallrye microprofile and reactive messaging with Kafka, hibernate ORM with panache for DB2 database, Vert.x with reactive route, Appsody Quarkus stack and Tekton pipeline.
 
-This application is done with Smallrye microprofile, using Quarkus, reactive messaging with Kafka, hibernate ORM with panache for DB2 database, Appsody and Tekton pipeline.
+For detail implementation approach and design and different deployment model, read explanations of this service in [the main solution documentation](https://ibm-cloud-architecture.github.io/vaccine-solution-main/solution/orderms/).
 
-Below is a simple getting started to run locally.
 
 ## Appsody pre-requisites
 
@@ -20,7 +19,7 @@ appsody repo list
 
 ## Build and run locally
 
-To deploy on OpenShift cluster see instruction in [main documentation](https://github.com/ibm-cloud-architecture/vaccine-solution-main/solution/orderms/).
+To deploy on OpenShift cluster see instruction in [main documentation](https://ibm-cloud-architecture.github.io/vaccine-solution-main/solution/orderms/).
 
 To run locally we have defined a docker-compose file with a simple one broker Kafka node based on Strimzi Kafka 2.5 image.
 
@@ -30,13 +29,17 @@ Start the app in development mode: `./mvnw compile quarkus:dev`.
 
 You can also generate the native executable with `./mvnw clean package -Pnative`.
 
-Use the following address to post an order using Swagger UI [http://localhost:8080/swagger-ui/#/default/post_orders](http://localhost:8080/swagger-ui/#/default/post_orders) or the end to end testing as:
+Use the following address to post an order using Swagger UI [http://localhost:8080/swagger-ui/#/default/post_orders](http://localhost:8080/swagger-ui/#/default/post_orders) or use the end to end testing as:
 
 ```shell
 cd e2e
 ./post-order.sh
-
 ```
+
+## Tekton pipeline
+
+
+
 
 ## Troubleshooting
 

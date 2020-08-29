@@ -31,10 +31,9 @@ services:
         LICENSE: accept
         DBNAME: testdb
         DB2INSTANCE: db2inst1
-        BLU: false
-        TO_CREATE_SAMPLEDB: false
+        TO_CREATE_SAMPLEDB: "false"
         DB2INST1_PASSWORD: ${DB2INST1_PASSWORD:-db2inst1}
-        HADR_ENABLED: false
+        HADR_ENABLED: "false"
     image: ibmcom/db2:11.5.0.0a
     ports:
         - 50000:50000

@@ -42,6 +42,8 @@ yarn install
 yarn serve
 ```
 
+Use the web browser and developer console to the address [http://localhost:4545](http://localhost:4545)
+
 ## Tekton pipeline
 
 

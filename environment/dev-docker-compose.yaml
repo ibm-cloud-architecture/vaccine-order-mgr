@@ -1,0 +1,76 @@
+version: '3.1'
+services:
+  zookeeper:
+    image: strimzi/kafka:latest-kafka-2.6.0
+    command: [
+      "sh", "-c",
+      "bin/zookeeper-server-start.sh config/zookeeper.properties"
+    ]
+    ports:
+      - "2181:2181"
+    environment:
+      LOG_DIR: /tmp/logs
+    networks:
+      - kafka-network
+  kafka:
+    image: strimzi/kafka:latest-kafka-2.6.0
+    command: [
+      "sh", "-c",
+      "bin/kafka-server-start.sh config/server.properties --override listeners=$${KAFKA_LISTENERS} --override advertised.listeners=$${KAFKA_ADVERTISED_LISTENERS} --override zookeeper.connect=$${KAFKA_ZOOKEEPER_CONNECT}"
+    ]
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      LOG_DIR: "/tmp/logs"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    networks:
+      - kafka-network
+  db2:
+    container_name: db2
+    environment:
+        LICENSE: accept
+        DBNAME: testdb
+        DB2INSTANCE: db2inst1
+        TO_CREATE_SAMPLEDB: "false"
+        DB2INST1_PASSWORD: ${DB2INST1_PASSWORD:-db2inst1}
+        HADR_ENABLED: "false"
+    image: ibmcom/db2:11.5.0.0a
+    ports:
+        - 50000:50000
+        - 55000:55000
+    privileged: true
+    volumes:
+        - ./db2data:/database
+    networks:
+      - kafka-network
+  maven:
+    image: maven
+    volumes:
+      - "../:/app"
+      - "~/.m2:/root/.m2"
+    depends_on:
+      - kafka
+    hostname: orderms
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      APP_TARGET_MESSAGING: Kafka
+      QUARKUS_PROFILE: dev
+      DBUSER: db2inst1
+      DBPWD: db2inst1
+      SSLJDBCURL: jdbc:db2://db2:50000/sample
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    working_dir: /app
+    command: "./mvnw quarkus:dev"
+    networks:
+      - kafka-network
+    depends_on:
+      - db2
+networks:
+  kafka-network:
+    name: kafkanet

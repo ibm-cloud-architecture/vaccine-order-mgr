@@ -18,10 +18,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import ibm.gse.eda.vaccines.api.dto.VaccineOrder;
+import ibm.gse.eda.vaccines.domain.OrderStatus;
 import ibm.gse.eda.vaccines.domain.VaccineOrderEntity;
 import io.quarkus.panache.common.Sort;
 
-@Path("/orders")
+@Path("/api/v1/orders")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class OrderResource {
@@ -54,6 +55,7 @@ public class OrderResource {
     public Response create(VaccineOrder order) {
         validateOrder(order);
         VaccineOrderEntity orderEntity = VaccineOrder.toEntity(order);
+        orderEntity.status= OrderStatus.OPEN;
         orderEntity.creationDate = simpleDateFormat.format(new Date());
         orderEntity.persist();
         return Response.ok(order).status(201).build();

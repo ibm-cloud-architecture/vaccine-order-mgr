@@ -1,4 +1,4 @@
-package ibm.gse.eda.api;
+package it;
 
 import static io.restassured.RestAssured.given;
 

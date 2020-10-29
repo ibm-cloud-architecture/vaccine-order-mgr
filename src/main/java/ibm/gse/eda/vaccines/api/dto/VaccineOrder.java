@@ -13,17 +13,21 @@ import ibm.gse.eda.vaccines.domain.VaccineOrderEntity;
 public class VaccineOrder {
     @Schema(required = false, description = "Unique order identifier, will be generated")
     public Long id;
+    @Schema(required = true, description = "Name of the asking organization")
+    public String askingOrganization;
     @Schema(required = true, description = "Location for vaccine lots to be delivered")
     public String deliveryLocation;
     @Schema(required = false,
             description = " higher priority order may displace lower priority order plans",
-            enumeration = {"0","1","2"},
+            enumeration = {"0","1","2","3","5"},
             defaultValue = "0")
     public Integer priority = 0;
     @Schema(required = true, description = "Expected quantity of vaccines")
     public Long quantity; 
     @Schema(required = false, description = "if not provided, indicating ASAP")
     public LocalDate deliveryDate;
+    @Schema(required = false, description = "Vaccine type, default COVID-19")
+    public String vaccineType = "COVID-19";
     public OrderStatus status;
 
     public VaccineOrder(){}

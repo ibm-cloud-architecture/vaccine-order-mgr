@@ -36,10 +36,10 @@ public class OrderService {
     public VaccineOrderEntity createOrder(VaccineOrderEntity orderEntity) {
         orderEntity.status = OrderStatus.OPEN;
         orderEntity.creationDate = simpleDateFormat.format(new Date());
-        orderEntity = orderRepository.save(orderEntity);
         OrderEvent evt = OrderEvent.fromEntity(orderEntity);
         evt.type = OrderEvent.ORDER_CREATED;
-        orderEventRepository.persist(evt);
+        orderEntity.setOrderEvent(evt);
+        orderEntity = orderRepository.save(orderEntity);
         return orderEntity;
     }
 

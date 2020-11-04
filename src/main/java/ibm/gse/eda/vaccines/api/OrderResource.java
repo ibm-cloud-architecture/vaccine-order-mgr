@@ -96,7 +96,7 @@ public class OrderResource {
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") String id) {
-            orderService.deleteOrder(id);
+        orderService.deleteOrder(id);
         return Response.status(204).build();
     }
 

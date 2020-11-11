@@ -17,7 +17,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import ibm.gse.eda.vaccines.api.dto.VaccineOrder;
+import ibm.gse.eda.vaccines.api.dto.VaccineOrderRequest;
 import ibm.gse.eda.vaccines.domain.OrderService;
 import ibm.gse.eda.vaccines.domain.OrderStatus;
 import ibm.gse.eda.vaccines.domain.VaccineOrderEntity;
@@ -38,14 +38,14 @@ public class OrderResource {
     OrderService  orderService;
 
     @GET
-    public Multi<VaccineOrder> getAllOrders() {
-        return Multi.createFrom().items(VaccineOrder.fromAll(orderRepository.listAll()).stream());
+    public Multi<VaccineOrderRequest> getAllOrders() {
+        return Multi.createFrom().items(VaccineOrderRequest.fromAll(orderRepository.listAll()).stream());
     }
 
     @GET
     @Path("/active")
-    public Multi<VaccineOrder> getActiveOrders() {
-        return Multi.createFrom().items(VaccineOrder.fromAll(orderService.findActive()).stream());
+    public Multi<VaccineOrderRequest> getActiveOrders() {
+        return Multi.createFrom().items(VaccineOrderRequest.fromAll(orderService.findActive()).stream());
     }
     
   /**
@@ -56,23 +56,23 @@ public class OrderResource {
     */
     @GET
     @Path("/{id}")
-    public Uni<VaccineOrder> get(@PathParam("id") Long id) {
+    public Uni<VaccineOrderRequest> get(@PathParam("id") Long id) {
         VaccineOrderEntity order = orderRepository.findById(id);
         if (order == null) {
             throw new WebApplicationException("Order with id of " + id + " does not exist.", 404);
      
         }
-        return Uni.createFrom().item(VaccineOrder.fromEntity(order));
+        return Uni.createFrom().item(VaccineOrderRequest.fromOrder(order));
     }
     
     @POST
-    public Uni<VaccineOrder> create(VaccineOrder order) {
+    public Uni<VaccineOrderRequest> create(VaccineOrderRequest order) {
         validateOrder(order);
-        VaccineOrderEntity orderEntity = orderService.createOrder(VaccineOrder.toEntity(order));
-        return Uni.createFrom().item(VaccineOrder.fromEntity(orderEntity));
+        VaccineOrderEntity savedOrderEntity = orderService.saveNewOrder(VaccineOrderRequest.toOrderEntity(order));
+        return Uni.createFrom().item(VaccineOrderRequest.fromOrder(savedOrderEntity));
     }
 
-    private void validateOrder(VaccineOrder order) {
+    private void validateOrder(VaccineOrderRequest order) {
         if (order.deliveryLocation == null) {
             throw new WebApplicationException("Order deliveryLocation was not set on request.", 422);
         }
@@ -82,14 +82,14 @@ public class OrderResource {
     }
     @PUT
     @Path("/{id}")
-    public Uni<VaccineOrder> update(@PathParam("id") String id, VaccineOrder order) {
+    public Uni<VaccineOrderRequest> update(@PathParam("id") String id, VaccineOrderRequest order) {
         if (order.id == null) {
             throw new WebApplicationException("Order is unknown for this id " + order.id, 422);
         }
         validateOrder(order);
-        VaccineOrderEntity orderEntity = orderService.update(VaccineOrder.toEntity(order));
+        VaccineOrderEntity updatedOrderEntity = orderService.updateExistingOrder(VaccineOrderRequest.toOrderEntity(order));
         
-        return Uni.createFrom().item(VaccineOrder.fromEntity(orderEntity));
+        return Uni.createFrom().item(VaccineOrderRequest.fromOrder(updatedOrderEntity));
     }
 
 
@@ -102,8 +102,8 @@ public class OrderResource {
 
     @GET
     @Path("/search/{destination}")
-    public VaccineOrder search(@PathParam("destination") String destination) {
-        return VaccineOrder.fromEntity(orderRepository.findByDestination(destination));
+    public VaccineOrderRequest searchByDestination(@PathParam("destination") String destination) {
+        return VaccineOrderRequest.fromOrder(orderRepository.findByDestination(destination));
     }
 
 }

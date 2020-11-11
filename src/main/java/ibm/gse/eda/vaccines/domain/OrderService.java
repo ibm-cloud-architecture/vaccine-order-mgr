@@ -5,26 +5,33 @@ import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.WebApplicationException;
 
-import ibm.gse.eda.vaccines.infrastructure.OrderEventRepository;
+import org.jboss.logging.Logger;
+
+import ibm.gse.eda.vaccines.domain.events.OrderCreatedEvent;
+import ibm.gse.eda.vaccines.domain.events.OrderUpdatedEvent;
 import ibm.gse.eda.vaccines.infrastructure.OrderRepository;
+import io.debezium.outbox.quarkus.ExportedEvent;
 
 /**
  * Service to implement business logic to manage order
  */
 @ApplicationScoped
 public class OrderService {
+    Logger logger = Logger.getLogger(OrderService.class);
+
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
 
     @Inject
     OrderRepository orderRepository;
 
     @Inject
-    OrderEventRepository orderEventRepository;
-    
+    Event<ExportedEvent<?, ?>> event;
+  
     public OrderService() {
     }
 
@@ -33,13 +40,11 @@ public class OrderService {
     }
 
     @Transactional
-    public VaccineOrderEntity createOrder(VaccineOrderEntity orderEntity) {
+    public VaccineOrderEntity saveNewOrder(VaccineOrderEntity orderEntity) {
         orderEntity.status = OrderStatus.OPEN;
         orderEntity.creationDate = simpleDateFormat.format(new Date());
-        OrderEvent evt = OrderEvent.fromEntity(orderEntity);
-        evt.type = OrderEvent.ORDER_CREATED;
-        orderEntity.setOrderEvent(evt);
-        orderEntity = orderRepository.save(orderEntity);
+        orderRepository.save(orderEntity);
+        event.fire(OrderCreatedEvent.of(orderEntity));
         return orderEntity;
     }
 
@@ -48,7 +53,7 @@ public class OrderService {
     }
 
     @Transactional
-    public VaccineOrderEntity update(VaccineOrderEntity order) {
+    public VaccineOrderEntity updateExistingOrder(VaccineOrderEntity order) {
         VaccineOrderEntity orderEntity = orderRepository.findById(order.id);
         if (orderEntity == null) {
             throw new WebApplicationException("Order with id of " + order.id + " does not exist.", 404);
@@ -57,6 +62,8 @@ public class OrderService {
         orderEntity.quantity = order.quantity;
         orderEntity.priority = order.priority;
         orderEntity.deliveryDate = order.deliveryDate;
+
+        event.fire(OrderUpdatedEvent.of(orderEntity));
         orderRepository.persistAndFlush(orderEntity);
         return orderEntity;
     }

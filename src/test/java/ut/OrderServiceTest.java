@@ -12,13 +12,13 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 public class OrderServiceTest {
     
-    @Inject
     OrderService orderService;
 
     @Test
     public void whenPostNewOrder_thenOrderShouldBeFound(){
+        orderService = new OrderService(new TestOrderRepository());
         VaccineOrderEntity orderEntity = new VaccineOrderEntity("Oregon","Portland",20);
-        VaccineOrderEntity orderEntityOut = orderService.createOrder(orderEntity);
+        VaccineOrderEntity orderEntityOut = orderService.saveNewOrder(orderEntity);
         Assertions.assertNotNull(orderEntityOut);
         orderEntityOut = orderService.findByOrganization("Oregon");
         Assertions.assertNotNull(orderEntityOut);

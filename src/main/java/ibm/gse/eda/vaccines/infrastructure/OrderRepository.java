@@ -3,9 +3,7 @@ package ibm.gse.eda.vaccines.infrastructure;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.transaction.Transactional;
 
-import ibm.gse.eda.vaccines.domain.OrderEvent;
 import ibm.gse.eda.vaccines.domain.OrderStatus;
 import ibm.gse.eda.vaccines.domain.VaccineOrderEntity;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
@@ -26,7 +24,5 @@ public class OrderRepository implements PanacheRepository<VaccineOrderEntity> {
         persist(e);
         return e;
     }
-
-	public void saveOrderEvent(OrderEvent evt) {
-	}
+    
 }

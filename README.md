@@ -9,22 +9,24 @@ For detail implementation approach and design and different deployment model, re
 
 To run locally we have defined a [docker-compose file]() with one Kafka broker node one zookeeper, one DB2 container for the persistence.
 
-Start Kafka backend from a terminal window: 
+Start Kafka backend from a terminal window as well as DB2 and maven with quarkus:dev: 
 
 ```
-cd enviroment
-docker-compose -f dev-docker-compose.yaml up
+cd environment
+docker-compose -f dev-docker-compose.yaml up --build -d
 ```
 
-Start the app in development mode: `./mvnw compile quarkus:dev`.
+Use the following address to post an order using the Swagger UI [http://localhost:8080/swagger-ui/#/default/post_orders](http://localhost:8080/swagger-ui/#/default/post_orders).
 
-You can also generate the native executable with `./mvnw clean package -Pnative`.
+### Package for docker
 
-Use the following address to post an order using Swagger UI [http://localhost:8080/swagger-ui/#/default/post_orders](http://localhost:8080/swagger-ui/#/default/post_orders) 
+```shell
+  mvn package quarkus:dev -Dui.deps -Dui.dev
+```
 
-## Test
+## Tests
 
-Unit and integration tests are done with Junit 5 and Test Container when needed or mockito.
+Unit and integration tests are done with Junit 5 and Test Container when needed or mockito to avoid backend access for CI/CD.
 
 use the end to end testing as:
 
@@ -35,7 +37,7 @@ cd e2e
 
 ## UI development
 
-Under the ui do the following:
+Under the ui folder, do the following:
 
 ```
 yarn install
@@ -44,7 +46,6 @@ yarn serve
 
 Use the web browser and developer console to the address [http://localhost:4545](http://localhost:4545)
 
-## Tekton pipeline
 
 
 

@@ -2,12 +2,7 @@ package ibm.gse.eda.vaccines.domain;
 
 import java.time.LocalDate;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
@@ -22,8 +17,6 @@ public class VaccineOrderEntity extends PanacheEntity {
     // derived attributes
     public OrderStatus status;
     public String creationDate;
-    @OneToOne(cascade = CascadeType.MERGE)
-    public OrderEvent orderEvent;
 
     public VaccineOrderEntity(){}
 
@@ -35,12 +28,6 @@ public class VaccineOrderEntity extends PanacheEntity {
         this.quantity = quantity;
     }
 
-    public OrderEvent getOrderEvent() {
-        return orderEvent;
-    }
-
-    public void setOrderEvent(OrderEvent orderEvent) {
-        this.orderEvent = orderEvent;
-    }
+   
     
 }

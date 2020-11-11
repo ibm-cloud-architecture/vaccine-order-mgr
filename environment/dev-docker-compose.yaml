@@ -10,8 +10,6 @@ services:
       - "2181:2181"
     environment:
       LOG_DIR: /tmp/logs
-    networks:
-      - kafka-network
   kafka:
     image: strimzi/kafka:latest-kafka-2.6.0
     command: [
@@ -27,8 +25,6 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-    networks:
-      - kafka-network
   db2:
     container_name: db2
     environment:
@@ -45,8 +41,24 @@ services:
     privileged: true
     volumes:
         - ./db2data:/database
-    networks:
-      - kafka-network
+  connect:
+    image: debezium/connect:1.3
+    ports:
+      - 8083:8083
+      - 5006:5005
+    links:
+      - kafka
+      - db2
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=src_connect_configs
+      - OFFSET_STORAGE_TOPIC=src_connect_offsets
+      - STATUS_STORAGE_TOPIC=src_connect_statuses
+      - CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE=false
+      - CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE=false
+      - KAFKA_DEBUG=true
+      - DEBUG_SUSPEND_FLAG=n
   maven:
     image: maven
     volumes:
@@ -54,10 +66,12 @@ services:
       - "~/.m2:/root/.m2"
     depends_on:
       - kafka
+      - db2
     hostname: orderms
+    links:
+      - kafka
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      APP_TARGET_MESSAGING: Kafka
       QUARKUS_PROFILE: dev
       DBUSER: db2inst1
       DBPWD: db2inst1
@@ -67,10 +81,4 @@ services:
       - "5005:5005"
     working_dir: /app
     command: "./mvnw quarkus:dev"
-    networks:
-      - kafka-network
-    depends_on:
-      - db2
-networks:
-  kafka-network:
-    name: kafkanet
+  

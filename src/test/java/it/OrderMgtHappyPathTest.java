@@ -10,7 +10,7 @@ import javax.json.bind.JsonbBuilder;
 
 import org.junit.jupiter.api.Test;
 
-import ibm.gse.eda.vaccines.api.dto.VaccineOrder;
+import ibm.gse.eda.vaccines.api.dto.VaccineOrderRequest;
 import ibm.gse.eda.vaccines.domain.OrderStatus;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -23,11 +23,13 @@ public class OrderMgtHappyPathTest {
     public void createOrder(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
         String date = "18/08/2020";
-        VaccineOrder order = new VaccineOrder(1l, 
+        VaccineOrderRequest order = new VaccineOrderRequest(1l, 
             "Paris, France",
+            "France",
             10l,
             1, 
-            LocalDate.parse(date), 
+            LocalDate.parse(date),
+            "Covid", 
             OrderStatus.OPEN);
         
         Jsonb jsonb = JsonbBuilder.create();

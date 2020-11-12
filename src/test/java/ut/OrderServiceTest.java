@@ -1,7 +1,5 @@
 package ut;
 
-import com.google.inject.Inject;
-
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
@@ -9,6 +7,9 @@ import ibm.gse.eda.vaccines.domain.OrderService;
 import ibm.gse.eda.vaccines.domain.VaccineOrderEntity;
 import io.quarkus.test.junit.QuarkusTest;
 
+/**
+ *  Validate all the logic for managing order
+*/
 @QuarkusTest
 public class OrderServiceTest {
     

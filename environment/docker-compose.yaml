@@ -45,7 +45,7 @@ services:
     volumes:
         - ./db2data:/database
   connect:
-    image: debezium/connect:1.3
+    image: ibmcase/db2cdc
     ports:
       - 8083:8083
       - 5006:5005

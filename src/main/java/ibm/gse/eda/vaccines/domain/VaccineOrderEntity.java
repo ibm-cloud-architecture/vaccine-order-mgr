@@ -13,7 +13,7 @@ public class VaccineOrderEntity extends PanacheEntity {
     public String vaccineType;
     public Integer priority = 0;
     public Long quantity; 
-    public LocalDate deliveryDate;
+    public String deliveryDate;
     // derived attributes
     public OrderStatus status;
     public String creationDate;

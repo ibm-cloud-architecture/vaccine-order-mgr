@@ -2,9 +2,11 @@ package ibm.gse.eda.vaccines.domain.events;
 
 import java.time.Instant;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -13,17 +15,25 @@ import ibm.gse.eda.vaccines.domain.VaccineOrderEntity;
 import io.debezium.outbox.quarkus.ExportedEvent;
 
 @Entity
-public class OrderUpdatedEvent implements ExportedEvent<String, JsonNode> {
+public class OrderUpdatedEvent implements ExportedEvent<String, String> {
     
     private static ObjectMapper mapper = new ObjectMapper();
     @Id
-    private final long id;
-    private final JsonNode order;
-    private final Instant timestamp;
+    public long id;
+    @Column(length=2046)
+    public String order;
+    public Instant timestamp;
     
+    public OrderUpdatedEvent(){}
+
     public OrderUpdatedEvent(long id, JsonNode order) {
         this.id = id;
-        this.order = order;
+        try {
+            this.order = mapper.writeValueAsString(order);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            this.order = "";
+        }
         this.timestamp = Instant.now();
     }
 
@@ -52,7 +62,7 @@ public class OrderUpdatedEvent implements ExportedEvent<String, JsonNode> {
     }
 
     @Override
-    public JsonNode getPayload() {
+    public String getPayload() {
         return order;
     }
 

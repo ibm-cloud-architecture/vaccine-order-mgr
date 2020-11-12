@@ -1,6 +1,5 @@
 package ibm.gse.eda.vaccines.api.dto;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class VaccineOrderRequest {
     @Schema(required = true, description = "Expected quantity of vaccines")
     public Long quantity; 
     @Schema(required = false, description = "if not provided, indicating ASAP")
-    public LocalDate deliveryDate;
+    public String deliveryDate;
     @Schema(required = false, description = "Vaccine type, default COVID-19")
     public String vaccineType = "COVID-19";
     public OrderStatus status;
@@ -37,7 +36,7 @@ public class VaccineOrderRequest {
             String  askingOrganization,
             Long quantity, 
             Integer priority, 
-            LocalDate delivery,
+            String delivery,
             String type, 
             OrderStatus status) {
         this.id = idIn;
@@ -70,7 +69,7 @@ public class VaccineOrderRequest {
         entity.vaccineType = order.vaccineType;
         entity.quantity = order.quantity;
         entity.priority = order.priority;
-        entity.deliveryDate = order.deliveryDate;
+        entity.deliveryDate = order.deliveryDate.toString();
         entity.status = order.status;
 		return entity;
 	}

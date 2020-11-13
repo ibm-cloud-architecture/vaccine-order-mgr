@@ -10,5 +10,3 @@ CREATE TABLE DB2INST1.VaccineOrderEntity (
   deliveryDate VARCHAR(50),
   creationDate VARCHAR(50)
 );
-
-INSERT INTO VaccineOrderEntity(id, askingOrganization, deliveryLocation, priority,quantity, status, vaccineType,deliveryDate,creationDate) VALUES (hibernate_sequence.NEXTVAL, 'UK Governement','London',1,250,0,"Covid-19", "02/27/2021","11/01/2020");

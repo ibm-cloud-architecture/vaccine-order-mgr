@@ -20,9 +20,4 @@ public class OrderRepository implements PanacheRepository<VaccineOrderEntity> {
     }
 
     
-    public VaccineOrderEntity save(VaccineOrderEntity e) {
-        persist(e);
-        return e;
-    }
-    
 }

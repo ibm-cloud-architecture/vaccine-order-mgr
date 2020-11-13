@@ -2,6 +2,7 @@ version: '3.1'
 services:
   zookeeper:
     image: strimzi/kafka:latest-kafka-2.6.0
+    container_name: zookeeper
     command: [
       "sh", "-c",
       "bin/zookeeper-server-start.sh config/zookeeper.properties"
@@ -12,6 +13,7 @@ services:
       LOG_DIR: /tmp/logs
   kafka:
     image: strimzi/kafka:latest-kafka-2.6.0
+    container_name: kafka
     command: [
       "sh", "-c",
       "bin/kafka-server-start.sh config/server.properties --override listeners=$${KAFKA_LISTENERS} --override advertised.listeners=$${KAFKA_ADVERTISED_LISTENERS} --override zookeeper.connect=$${KAFKA_ZOOKEEPER_CONNECT}"
@@ -45,7 +47,11 @@ services:
     volumes:
         - ./db2data:/database
   connect:
-    image: ibmcase/db2cdc
+    image: ibmcase/cdc-connector
+    container_name: cdc-connector
+    build:
+      context:
+        ./cdc
     ports:
       - 8083:8083
       - 5006:5005
@@ -63,7 +69,8 @@ services:
       - KAFKA_DEBUG=true
       - DEBUG_SUSPEND_FLAG=n
   orderservice:
-    image: ibmcase/vaccine-order-ms
+    image: ibmcase/vaccineorderms
+    container_name: vaccineorderms
     build:
       context:
         ../
@@ -75,7 +82,9 @@ services:
     links:
       - db2
       - kafka
+    depends_on:
+      - db2
     environment:
       - DBUSER=db2inst1
       - DBPWD=db2inst1
-      - SSLJDBCURL=jdbc:db2://db2:50000/sample
+      - SSLJDBCURL=jdbc:db2://db2:50000/TESTDB

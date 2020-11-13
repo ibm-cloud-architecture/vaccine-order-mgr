@@ -1,5 +1,5 @@
 ARG DEBEZIUM_VERSION
-FROM debezium/connect:$DEBEZIUM_VERSION
+FROM debezium/connect:1.3
 
 USER root
 RUN yum -y install libaio curl && yum clean all

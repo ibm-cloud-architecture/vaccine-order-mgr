@@ -1,7 +1,8 @@
 {
-    "deliveryDate": "2020-07-25",
+    "": "France",
+    "deliveryDate": "2021-07-25",
     "deliveryLocation": "Paris,France",
-    "priority": "1",
+    "priority": 1,
     "quantity": 1,
-    "status": "BUILDING"
+    "type": "COVID-19"
 }

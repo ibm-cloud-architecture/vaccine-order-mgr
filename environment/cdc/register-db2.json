@@ -11,6 +11,14 @@
         "database.dbname" : "TESTDB",
         "database.cdcschema": "ASNCDC",
         "database.history.kafka.bootstrap.servers" : "kafka:9092",
-        "database.history.kafka.topic": "db2.orders"
+        "database.history.kafka.topic": "db.history.vaccine.orders",
+        "table.include.list" : "DB2INST1.ORDEREVENTS",
+        "tombstones.on.delete" : "false",
+        "transforms" : "outbox",
+        "transforms.outbox.type" : "io.debezium.transforms.outbox.EventRouter",
+        "transforms.outbox.route.topic.replacement" : "${routedByValue}.events",
+        "transforms.outbox.table.field.event.timestamp" : "timestamp",
+        "transforms.outbox.table.fields.additional.placement" : "type:header:eventType"
     }
+    
 }

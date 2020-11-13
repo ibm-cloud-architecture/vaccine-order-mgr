@@ -41,9 +41,10 @@ public class OrderService {
 
     @Transactional
     public VaccineOrderEntity saveNewOrder(VaccineOrderEntity orderEntity) {
+        logger.info("persist for " + orderEntity.askingOrganization + " " + orderEntity.id);
         orderEntity.status = OrderStatus.OPEN;
         orderEntity.creationDate = simpleDateFormat.format(new Date());
-        orderRepository.save(orderEntity);
+        orderRepository.persist(orderEntity);
         event.fire(OrderCreatedEvent.of(orderEntity));
         return orderEntity;
     }

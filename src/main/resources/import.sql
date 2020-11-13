@@ -1,1 +1,1 @@
-INSERT INTO VaccineOrderEntity(id, askingOrganization, deliveryLocation, priority,quantity, status, vaccineType,deliveryDate,creationDate) VALUES (hibernate_sequence.NEXTVAL, 'French Governement','Paris',1,150,"OPEN","Covid-19", "03/30/2021","11/11/2020");
+INSERT INTO VaccineOrderEntity(id, askingOrganization, deliveryLocation, priority,quantity, status, vaccineType,deliveryDate,creationDate) VALUES (hibernate_sequence.NEXTVAL, 'French Governement','Paris',1,150,0,'COVID-19', '30-Mar-2021 01:00:00','12-Nov-2020 02:02:40');

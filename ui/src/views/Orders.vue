@@ -27,6 +27,13 @@
                     <v-row>
                       <v-col cols="12" sm="6" md="4">
                         <v-text-field
+                          v-model="editedItem.askingOrganization"
+                          label="Organization"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field
                           v-model="editedItem.deliveryLocation"
                           label="Delivery Location"
                           required
@@ -45,7 +52,6 @@
                           <template v-slot:activator="{ on, attrs }">
                             <v-text-field
                               v-model="editedItem.deliveryDate"
-                              label="Picker in menu"
                               prepend-icon="mdi-calendar"
                               readonly
                               v-bind="attrs"
@@ -64,7 +70,7 @@
                             <v-btn
                               text
                               color="primary"
-                              @click="$refs.menu.save(date)"
+                              @click="$refs.menu.save(editedItem.deliveryDate)"
                             >
                               OK
                             </v-btn>
@@ -88,8 +94,14 @@
                         min="1"
                         thumb-label="always"
                       ></v-slider>
-                      
                     </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-select
+                          :items="vaccineTypes"
+                          v-model="editedItem.type"
+                          label="Vaccine Type"
+                        ></v-select>
+                      </v-col>
                      </v-row>
                   </v-container>
                 </v-card-text>
@@ -125,24 +137,29 @@ export default {
   name: "Orders",
   data: () => ({
     orders: [],
+    vaccineTypes: ["COVID-19", "H1N1"],
     editedIndex: -1,
     editedItem: {
-      id: 0,
+      askingOrganization: "",
       deliveryDate: new Date().toISOString().substr(0, 10),
       deliveryLocation: "",
       priority: 2,
       quantity: 150,
+      type: "COVID-19"
     },
     defaultItem: {
       id: -1,
+       askingOrganization: "",
       deliveryDate: new Date().toISOString().substr(0, 10),
       deliveryLocation: "",
       priority: 2,
       quantity: 150,
+       type: "COVID-19"
     },
     dialog: false,
     menu: false,
     headers: [
+      { text: "Organization", value: "askingOrganization", sortable: true },
       { text: "Location", value: "deliveryLocation", sortable: true },
       { text: "Target Date", value: "deliveryDate", sortable: true },
       { text: "Priority", value: "priority", sortable: true },
@@ -186,7 +203,7 @@ export default {
     save() {
       if (this.editedIndex > -1) {
         axios
-          .put(backendURL, this.editedItem)
+          .put(backendURL + "/" + this.editedItem.id, this.editedItem)
           .then((resp) => (this.editedItem = resp.data));
         Object.assign(this.orders[this.editedIndex], this.editedItem);
       } else {

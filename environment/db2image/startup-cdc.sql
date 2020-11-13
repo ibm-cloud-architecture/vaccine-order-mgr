@@ -1,0 +1,7 @@
+
+VALUES ASNCDC.ASNCDCSERVICES('status','asncdc');
+
+
+CALL ASNCDC.ADDTABLE('DB2INST1', 'VaccineOrderEntity' ); 
+
+VALUES ASNCDC.ASNCDCSERVICES('reinit','asncdc');

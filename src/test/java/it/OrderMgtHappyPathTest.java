@@ -28,8 +28,8 @@ public class OrderMgtHappyPathTest {
             "France",
             10l,
             1, 
-            LocalDate.parse(date),
-            "Covid", 
+            LocalDate.parse(date).toString(),
+            "Covid=19", 
             OrderStatus.OPEN);
         
         Jsonb jsonb = JsonbBuilder.create();

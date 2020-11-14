@@ -3,7 +3,7 @@
     "config": {
         "connector.class" : "io.debezium.connector.db2.Db2Connector",
         "tasks.max" : "1",
-        "database.server.name" : "db2",
+        "database.server.name" : "vaccine_lot_db",
         "database.hostname" : "db2",
         "database.port" : "50000",
         "database.user" : "db2inst1",
@@ -11,14 +11,12 @@
         "database.dbname" : "TESTDB",
         "database.cdcschema": "ASNCDC",
         "database.history.kafka.bootstrap.servers" : "kafka:9092",
-        "database.history.kafka.topic": "db.history.vaccine.orders",
+        "database.history.kafka.topic": "db_history_vaccine_orders",
+        "topic.creation.default.replication.factor": 1,  
+        "topic.creation.default.partitions": 1,  
+        "topic.creation.default.cleanup.policy": "compact", 
         "table.include.list" : "DB2INST1.ORDEREVENTS",
-        "tombstones.on.delete" : "false",
-        "transforms" : "outbox",
-        "transforms.outbox.type" : "io.debezium.transforms.outbox.EventRouter",
-        "transforms.outbox.route.topic.replacement" : "${routedByValue}.events",
-        "transforms.outbox.table.field.event.timestamp" : "timestamp",
-        "transforms.outbox.table.fields.additional.placement" : "type:header:eventType"
-    }
+        "tombstones.on.delete" : "false"
+     }
     
 }

@@ -1,8 +1,8 @@
 {
-    "": "France",
     "deliveryDate": "2021-07-25",
-    "deliveryLocation": "Paris,France",
+    "deliveryLocation": "Milano",
+    "askingOrganization": "Italy gov",
     "priority": 1,
-    "quantity": 1,
+    "quantity": 100,
     "type": "COVID-19"
 }

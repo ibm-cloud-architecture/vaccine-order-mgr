@@ -1,19 +1,40 @@
 <template>
-  <div class="home">
-
-  <h3>Welcome to the Vaccine order Demonstration</h3>
-
-    <h4>Demonstration script</h4>
-    <p>This application is for demonstration purpose to create Vaccine orders for a governement agencies.</p>
-    <ul>
-      <li>Go to the orders menu to see the list of current order or create new order</li>
-      <li>Using the new order button add a new vaccine request.</li> 
-    </ul>
-   </div>
+  <div>
+    <h3>Welcome to the Vaccine order Demonstration</h3>
+    <div class="outer">
+      
+      <div class="inner">
+      <h4 style="line-height: 50px;">Demonstration script</h4>
+      <p>
+        This application is for demonstration purpose to create Vaccine orders
+        for a governement agencies.
+      </p>
+      <ul>
+        <li>
+          Go to the orders menu to see the list of current order or create new
+          order
+        </li>
+        <li>Using the new order button add a new vaccine request.</li>
+      </ul>
+      </div>
+    </div>
+  </div>
 </template>
+<style scoped>
+.outer {
+  width: 100%;
+  margin: 0 auto;
+  line-height: 30px;
+}
+
+.inner {
+  text-align: left;
+  margin-left: 50px;
+}
+</style>
 
 <script>
 export default {
-  name: 'Home'
-}
+  name: "Home",
+};
 </script>

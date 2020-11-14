@@ -2,8 +2,15 @@
 
 This service is responsible to manage the Vaccine Order entity. It is done with Smallrye microprofile and reactive messaging with Kafka, hibernate ORM with panache for DB2 database, Vert.x with reactive route, Appsody Quarkus stack and Tekton pipeline.
 
-For detail implementation approach and design and different deployment model, read explanations of this service in [the main solution documentation](https://ibm-cloud-architecture.github.io/vaccine-solution-main/solution/orderms/).
+For detail implementation approach, design and different deployment model, read explanations of this service in [the main solution documentation](https://ibm-cloud-architecture.github.io/vaccine-solution-main/solution/orderms/).
 
+The goals of this project are:
+
+* Quarkus app with [Debezium outbox](https://debezium.io/documentation/reference/integrations/outbox.html) extension
+* Reactive APP with Mutiny
+* JPA with Panache
+* DB2 settings for change data capture
+* Debezium DB2 connector to publish OrderEvents to Kafka topic
 
 ## Build and run locally
 
@@ -16,7 +23,7 @@ If you want to build this image you can do the following command. The other way 
  docker build -t ibmcase/db2cdc .
  ```
 
-In the logs you should see the execution of the [cdcsetup.sh](https://github.com/ibm-cloud-architecture/vaccine-order-mgr/blob/master/environment/db2image/cdcsetup.sh) script which maps to the steps described in [this debezium note](https://debezium.io/documentation/reference/connectors/db2.html#setting-up-db2)
+In the logs you should see the execution of the [cdcsetup.sh](https://github.com/ibm-cloud-architecture/vaccine-order-mgr/blob/master/environment/db2image/cdcsetup.sh) script which maps to the steps described in [this Debezium note](https://debezium.io/documentation/reference/connectors/db2.html#setting-up-db2)
 
 To run locally we have defined a [docker-compose file](https://github.com/ibm-cloud-architecture/vaccine-order-mgr/blob/master/environment/docker-compose.yaml) with one Kafka broker, one zookeeper, one DB2 container for the persistence, one Kafka Connect with the Debezium code and DB2 Jdbc driver and one vaccine-order-service. 
 
@@ -41,8 +48,12 @@ To run locally we have defined a [docker-compose file](https://github.com/ibm-cl
 
 ```shell
 # connect to DB2 server
-# Access the database
+docker exec -ti db2 bash
+# Access the database 
 db2 connect to TESTDB USER DB2INST1
+# use db2inst1 as password
+# list existing schemas
+ db2 "select * from syscat.schemata"
 # list tables
 db2 list tables
 # this is the outcomes if the order services was started
@@ -52,14 +63,31 @@ ORDERCREATEDEVENT               DB2INST1        T     2020-11-12-01.50.10.400490
 ORDEREVENTS                     DB2INST1        T     2020-11-12-01.50.10.650172
 ORDERUPDATEDEVENT               DB2INST1        T     2020-11-12-01.50.10.796566
 VACCINEORDERENTITY              DB2INST1        T     2020-11-12-01.50.10.874172
-# Verify the content of the orders
+# Verify the content of the current orders
 db2 "select * from vaccineorderentity"
+# List the table for the change data capture
+db2 list tables for schema asncdc
 ```
 
 * Define Kafka topics
 
+Some topics are created bu Kafka Connector.
+
+```shell
+# Under environment folder
+./createTopic.sh
+# validate topics created
+./listTopics.sh
+
+__consumer_offsets
+db_history_vaccine_orders
+src_connect_configs
+src_connect_offsets
+src_connect_statuses
+vaccine_shipmentplan
 ```
-```
+
+The `db_history_vaccine_orders` is the topic used to include database schema change on the vaccine orders table. 
 
 * Deploy and start the Debezium DB2 connector. The connector definition is [register-db2.json](https://github.com/ibm-cloud-architecture/vaccine-order-mgr/blob/master/environment/cdc/register-db2.json)
 
@@ -68,32 +96,48 @@ db2 "select * from vaccineorderentity"
  curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @cdc/register-db2.json
  ```
 
-* Verify Topics created
+* Verify Topics created by the connector:
 
  ```shell
   ./listTopics.sh 
-  __consumer_offsets
-  db2
-  db2.DB2INST1.VACCINEORDERENTITY
-  db2.orders
-  src_connect_configs
-  src_connect_offsets
-  src_connect_statuses
+  vaccine_lot_db
+  vaccine_lot_db.DB2INST1.ORDEREVENTS
  ```
+
+The newly created `vaccine_lot_db` topic includes definition of the database and the connector. It does not aim to be used by application. The one to be used to get business events is `vaccine_lot_db.DB2INST1.ORDEREVENTS`.
+
+The connector is doing a snapshot of the `DB2INST1.ORDEREVENTS` table to send existing records to the topic.
 
 * Start a consumer on the CDC topic for the order events
 
  ```shell
- docker-compose -f docker-compose.yaml exec kafka /opt/kafka/bin/kafka-console-consumer.sh     --bootstrap-server kafka:9092     --from-beginning     --property print.key=true     --topic db2.DB2INST1.VACCINEORDERENTITY
+ docker-compose exec kafka /opt/kafka/bin/kafka-console-consumer.sh     --bootstrap-server kafka:9092     --from-beginning     --property print.key=true     --topic vaccine_lot_db.DB2INST1.ORDEREVENTS
  ```
+
+* Add new order from the user interface: http://localhost:8080/#/Orders, or...
 
 * Post an order using the API: [http://localhost:8080/swagger-ui/#/default/post_orders](http://localhost:8080/swagger-ui/#/default/post_orders). Use the following JSON
 
  ```json
-
+ {
+    "deliveryDate": "2021-07-25",
+    "deliveryLocation": "Milano",
+    "askingOrganization": "Italy gov",
+    "priority": 1,
+    "quantity": 100,
+    "type": "COVID-19"
+ }
  ```
 
-### Package the oder service with docker
+ * The expected result should have the following records in the Kafka topic:
+
+ ```json
+ {"ID":"lvz4gYs/Q+aSqKmWjVGMXg=="}	
+ {"before":null,"after":{"ID":"lvz4gYs/Q+aSqKmWjVGMXg==","AGGREGATETYPE":"VaccineOrderEntity","AGGREGATEID":"21","TYPE":"OrderCreated","TIMESTAMP":1605304440331350,"PAYLOAD":"{\"orderID\":21,\"deliveryLocation\":\"London\",\"quantity\":150,\"priority\":2,\"deliveryDate\":\"2020-12-25\",\"askingOrganization\":\"UK Governement\",\"vaccineType\":\"COVID-19\",\"status\":\"OPEN\",\"creationDate\":\"13-Nov-2020 21:54:00\"}"},"source":{"version":"1.3.0.Final","connector":"db2","name":"vaccine_lot_db","ts_ms":1605304806596,"snapshot":"last","db":"TESTDB","schema":"DB2INST1","table":"ORDEREVENTS","change_lsn":null,"commit_lsn":"00000000:0000150f:0000000000048fca"},"op":"r","ts_ms":1605304806600,"transaction":null}
+ ```
+
+
+### Package the order service with docker
 
 If you want to build each images manually:
 
@@ -120,12 +164,11 @@ If you want to build each images manually:
  ```
 
 
-
 ## Tests
 
 Unit and integration tests are done with Junit 5 and Test Container when needed or mockito to avoid backend access for CI/CD.
 
-use the end to end testing as:
+For end to end testing the `e2e` folder includes some python scripts to test new order creation.
 
 ```shell
 cd e2e
@@ -134,43 +177,36 @@ cd e2e
 
 ## UI development
 
-Under the ui folder, do the following:
+For UI development start the components with `docker-compose  -f dev-docker-compose.yaml up -d`, then under the ui folder, do the following:
 
 ```
 yarn install
 yarn serve
 ```
 
-Use the web browser and developer console to the address [http://localhost:4545](http://localhost:4545)
+Use the web browser and developer console to the address [http://localhost:4545](http://localhost:4545). The vue app is configured to proxy to `localhost:8080`.
 
 
-
-
-## Openshift deployment
+## OpenShift deployment
 
 To deploy on OpenShift cluster see instruction in [main documentation](https://ibm-cloud-architecture.github.io/vaccine-solution-main/solution/orderms/).
 
 
 ## Troubleshooting
 
-If you need to connect to the local DB2 instance use the following commands to first connect to DB2 server and then use db2 CLI:
+### Logs:
 
 ```shell
-docker exec -ti db2 bash -c "su - db2inst1"
-# connect to the  db
-db2 connect to TESTDB
-# list tables
- db2 list tables
-# List the existing orders:
-db2 "select * from VaccineOrderEntity"
-# Look at the table structure
-db2 describe table DB2INST1.ORDEREVENTS
+# microservice logs:
 
-db2 "select * from ORDEREVENTS"
-
-db2 connect reset 
 ```
+### Connector operations
 
+To delete the CDC connector:
+
+```
+curl -i -X DELETE  http://localhost:8083/connectors/orderdb-connector
+```
 
 ### Errors
 

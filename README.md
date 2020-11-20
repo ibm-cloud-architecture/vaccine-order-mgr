@@ -84,7 +84,7 @@ db_history_vaccine_orders
 src_connect_configs
 src_connect_offsets
 src_connect_statuses
-vaccine_shipmentplan
+vaccine_shipments
 ```
 
 The `db_history_vaccine_orders` is the topic used to include database schema change on the vaccine orders table. 
@@ -189,7 +189,7 @@ Use the web browser and developer console to the address [http://localhost:4545]
 
 ## OpenShift deployment
 
-To deploy on OpenShift cluster see instruction in [main documentation](https://ibm-cloud-architecture.github.io/vaccine-solution-main/solution/orderms/).
+To deploy on OpenShift cluster see instructions in the [main documentation](https://ibm-cloud-architecture.github.io/vaccine-solution-main/solution/orderms/).
 
 
 ## Troubleshooting

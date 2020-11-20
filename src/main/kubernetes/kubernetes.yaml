@@ -1,8 +1,0 @@
-telemapiVersion: v1
-kind: ConfigMap
-metadata:
-  name: vaccine-cmap
-data:
-    kafka-brokers: "broker-0-qnprtqnp7hnkssdz.kafka.svc01.us-east.eventstreams.cloud.ibm.com:9093,broker-1-qnprtqnp7hnkssdz.kafka.svc01.us-east.eventstreams.cloud.ibm.com:9093,broker-2-qnprtqnp7hnkssdz.kafka.svc01.us-east.eventstreams.cloud.ibm.com:9093,broker-3-qnprtqnp7hnkssdz.kafka.svc01.us-east.eventstreams.cloud.ibm.com:9093,broker-4-qnprtqnp7hnkssdz.kafka.svc01.us-east.eventstreams.cloud.ibm.com:9093,broker-5-qnprtqnp7hnkssdz.kafka.svc01.us-east.eventstreams.cloud.ibm.com:9093"
-    SSLJDBCURL: "jdbc:db2://dashdb-txn-sbox-yp-dal09-10.services.dal.bluemix.net:50001/BLUDB:sslConnection=true;"
-    KAFKA_CERT: ""

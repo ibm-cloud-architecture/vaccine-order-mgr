@@ -42,3 +42,4 @@ environment/db2data/
 scripts/setenv.sh
 ui/node_modules/
 ui/public/
+src/main/kubernetes/*secrets.yaml

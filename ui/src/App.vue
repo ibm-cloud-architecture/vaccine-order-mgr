@@ -12,7 +12,7 @@
         />
       </div>
       <v-toolbar-title
-        >Vaccine Order Service Simulator - v 0.1.0
+        >Vaccine Order Service Simulator - v 0.0.1
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn to="/" text>
@@ -22,6 +22,10 @@
       <v-btn to="/Orders" text>
         <v-icon left>mdi-store</v-icon>
         Orders
+      </v-btn>
+      <v-btn to="/plans" text>
+        <v-icon left>mdi-store</v-icon>
+        Shipment Plans
       </v-btn>
       <v-btn
         href="https://github.com/ibm-cloud-architecture/vaccine-order-mgr"

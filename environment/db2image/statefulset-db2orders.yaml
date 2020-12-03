@@ -1,0 +1,62 @@
+﻿kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: db2orders
+  namespace: eda-db2
+  labels:
+    app: db2orders
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db2orders
+  template:
+    metadata:
+      labels:
+        app: db2orders
+    spec:
+      volumes:
+        - name: db2orders-1
+          persistentVolumeClaim: 
+            claimName: db2orders-pvc
+      containers:
+        - name: db2orders
+          image: ibmcase/db2orders
+          imagePullPolicy: Always
+          env:
+            - name: LICENSE
+              value: accept
+            - name: DBNAME
+              value: VACCINEDB
+            - name: DB2INSTANCE
+              value: db2inst1
+            - name: DB2INST1_PASSWORD
+              value: db2inst1
+            - name: HADR_ENABLED
+              value: "false"
+            - name: TO_CREATE_SAMPLEDB
+              value: "false"
+          ports:
+            - containerPort: 22
+              protocol: TCP
+            - containerPort: 50000
+              protocol: TCP
+            - containerPort: 55000
+              protocol: TCP
+            - containerPort: 60006
+              protocol: TCP
+            - containerPort: 60007
+              protocol: TCP
+          volumeMounts:
+            - name: db2orders-1
+              mountPath: /database
+          terminationMessagePolicy: File   
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%

@@ -14,35 +14,58 @@ The goals of this project are:
 
 ## Build and run locally
 
-As the environment is using a DB2 configured for change data capture, a specific Db2 image is necessary. We have integrated a dockerfile and asn configuration to build such image. The details on this configuration are in the [Debezium Db2 connector documentation](https://debezium.io/documentation/reference/connectors/db2.html).
+### Prepare DB2 for Debezium CDC
+
+As the environment is using a DB2 database configured for change data capture, a specific Db2 image is necessary. We have integrated a [dockerfile](https://github.com/ibm-cloud-architecture/vaccine-order-mgr/blob/master/environment/db2image/Dockerfile) and asn configuration to build such image. The details for this configuration are in the [Debezium Db2 connector documentation](https://debezium.io/documentation/reference/connectors/db2.html).
 
 If you want to build this image you can do the following command. The other way is to start all the components with the docker-compose and the ``--build` option.
 
  ```shell
  # under environment/db2image
- docker build -t ibmcase/db2cdc .
+ docker build -t ibmcase/db2orders .
+ # push the image to a registry
+ docker push ibmcase/db2orders
  ```
 
 In the logs you should see the execution of the [cdcsetup.sh](https://github.com/ibm-cloud-architecture/vaccine-order-mgr/blob/master/environment/db2image/cdcsetup.sh) script which maps to the steps described in [this Debezium note](https://debezium.io/documentation/reference/connectors/db2.html#setting-up-db2)
 
-To run locally we have defined a [docker-compose file](https://github.com/ibm-cloud-architecture/vaccine-order-mgr/blob/master/environment/docker-compose.yaml) with one Kafka broker, one zookeeper, one DB2 container for the persistence, one Kafka Connect with the Debezium code and DB2 Jdbc driver and one vaccine-order-service. 
+To run locally we have defined a [docker-compose file](https://github.com/ibm-cloud-architecture/vaccine-order-mgr/blob/master/environment/docker-compose.yaml) with one Kafka broker, one zookeeper, one DB2 container for the persistence, one Kafka Connect with the Debezium code with the DB2 Jdbc driver and one vaccine-order-service to support the demonstration.
+
+To deploy this DB2 image on OpenShift cluster do the following steps:
+
+```shell
+oc login ...
+oc new-project eda-db2
+# Define PV and PVC to persist data
+oc apply -f environment/db2image/db2orders-pvc.yaml
+# Deploy statefulset for the db2 image
+oc apply -f  environment/db2image/statefulset-db2orders.yaml
+
+```
+
+### Build vaccine order mgr service
 
  ```shell
+ # be sure to have packaged the order app first with
+ mvn package -Dui.deps -Dui.dev -DskipTests
+ # build the image
+ docker build -f src/main/docker/Dockerfile.jvm -t ibmcase/vaccineorderms  .
+ # can also build with docker compose
  cd environment
  # with the option to build the db2, and debezium cdc container images
  docker-compose up -d --build
- # or with pre-existing images coming from dockerhub
+ # or with pre-existing images coming from dockerhub or your local registry if images already built
  docker-compose up -d
  ```
 
- If you want to start everything in development mode, the vaccine order service is executed via a maven container which starts `quarkus:dev`. Therefore the command is: 
+ If you want to start everything in development mode, the vaccine order service is executed via a maven container which starts `quarkus:dev`. Therefore the command is using another compose file: 
 
  ```shell
  cd environment
  docker-compose -f dev-docker-compose.yaml up -d [--build]
  ```
 
- When started for the first time, the DB2 container may take some time to complete the TESTDB creation with the change data capture tables. (To do need to find a healthcheck way to assess db2 is running)
+ When started for the first time, the DB2 container may take some time to complete the TESTDB creation with the change data capture tables. (To do need to find a health check way to assess db2 is running)
 
 * To validate DB2 settings you can do one of the following troubleshooting commands:
 
@@ -212,4 +235,8 @@ curl -i -X DELETE  http://localhost:8083/connectors/orderdb-connector
 
 #### com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-1031, SQLSTATE=58031
 
-DB2 may not have finished its setup
+DB2 may not have finished its setup, specially using docker compose where the image may be built with Debezium and change data capture settings.
+
+#### A DRDA Data Stream Syntax Error was detected.  Reason: 0x2110. ERRORCODE=-4499, SQLSTATE=58009
+
+This error may happen on OpenShift deployment.

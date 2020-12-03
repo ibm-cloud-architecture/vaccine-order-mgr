@@ -1,0 +1,124 @@
+---
+version: '2'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:6.0.0
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  broker:
+    image: confluentinc/cp-server:6.0.0
+    hostname: broker
+    container_name: broker
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9101:9101"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:29092
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_ENABLE: 'true'
+      CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:6.0.0
+    hostname: control-center
+    container_name: control-center
+    depends_on:
+      - broker
+    ports:
+      - "9021:9021"
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'broker:29092'
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+      CONFLUENT_METRICS_TOPIC_REPLICATION: 1
+      PORT: 9021
+  db2:
+    container_name: db2
+    build:
+      context:
+        ../db2image
+    environment:
+        LICENSE: accept
+        DBNAME: TESTDB
+        DB2INSTANCE: db2inst1
+        TO_CREATE_SAMPLEDB: "false"
+        DB2INST1_PASSWORD: db2inst1
+        HADR_ENABLED: "false"
+    image: ibmcase/db2orders
+    ports:
+        - 50000:50000
+        - 55000:55000
+    privileged: true
+    volumes:
+        - ../db2data:/database
+  connect:
+    image: ibmcase/cdc-connector
+    container_name: cdc-connector
+    build:
+      context:
+        ../cdc
+    ports:
+      - 8083:8083
+      - 5006:5005
+    links:
+      - broker
+      - db2
+    environment:
+      - BOOTSTRAP_SERVERS=broker:29092
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=src_connect_configs
+      - OFFSET_STORAGE_TOPIC=src_connect_offsets
+      - STATUS_STORAGE_TOPIC=src_connect_statuses
+      - CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE=false
+      - CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE=false
+      - KAFKA_DEBUG=true
+      - DEBUG_SUSPEND_FLAG=n
+  orderservice:
+    image: ibmcase/vaccineorderms
+    container_name: vaccineorderms
+    build:
+      context:
+        ../../
+      dockerfile:
+        ./src/main/docker/Dockerfile.jvm
+    ports:
+      - 8080:8080
+      - 5005:5005
+    links:
+      - db2
+      - broker
+    depends_on:
+      - db2
+    environment:
+      - DBUSER=db2inst1
+      - DBPWD=db2inst1
+      - SSLJDBCURL=jdbc:db2://db2:50000/TESTDB
+      - QUARKUS_HIBERNATE_ORM_SQL_LOAD_SCRIPT=import.sql
+      - QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION=drop-and-create
+      - KAFKA_BROKERS=broker:29092
+      - KAFKA_SSL_TRUSTORE_LOCATION=
+      - KAFKA_CERT_PATH=
+      - KAFKA_CERT_PWD=
+      - KAFKA_SSL_TRUSTORE_PASSWORD=

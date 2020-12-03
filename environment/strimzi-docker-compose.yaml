@@ -34,11 +34,12 @@ services:
         ./db2image
     environment:
         LICENSE: accept
-        DBNAME: TESTDB
+        DBNAME: VACCINEDB
         DB2INSTANCE: db2inst1
         TO_CREATE_SAMPLEDB: "false"
         DB2INST1_PASSWORD: db2inst1
         HADR_ENABLED: "false"
+        STORAGE_DIR: /database
     image: ibmcase/db2orders
     ports:
         - 50000:50000
@@ -87,4 +88,10 @@ services:
     environment:
       - DBUSER=db2inst1
       - DBPWD=db2inst1
-      - SSLJDBCURL=jdbc:db2://db2:50000/TESTDB
+      - SSLJDBCURL=jdbc:db2://db2:50000/VACCINEDB
+      - QUARKUS_HIBERNATE_ORM_SQL_LOAD_SCRIPT=import.sql
+      - QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION=drop-and-create
+      - KAFKA_SSL_TRUSTORE_LOCATION=
+      - KAFKA_CERT_PATH=
+      - KAFKA_CERT_PWD=
+      - KAFKA_SSL_TRUSTORE_PASSWORD=

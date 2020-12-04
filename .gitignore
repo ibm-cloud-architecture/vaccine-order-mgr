@@ -2,7 +2,6 @@
 .project
 .classpath
 .settings/
-bin/
 
 # IntelliJ
 .idea
@@ -41,6 +40,5 @@ certs/
 environment/db2data/
 scripts/setenv.sh
 ui/node_modules/
-ui/public/
 src/main/kubernetes/*secrets.yaml
 truststore.p12

@@ -41,8 +41,8 @@ db2 -tvmf /asncdctools/src/asncdcaddremove.sql
 
 
 
-# create sample table and datat
-db2 -tvmf /asncdctools/src/startup.sql
+# create application table and data
+db2 -tvmf /asncdctools/src/build-tables.sql
 db2 -tvmf /asncdctools/src/startup-agent.sql
 sleep 10
 db2 -tvmf /asncdctools/src/startup-cdc.sql

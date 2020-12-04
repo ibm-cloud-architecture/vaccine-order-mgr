@@ -18,63 +18,34 @@ The goals of this project are:
 
 As the environment is using a DB2 database configured for change data capture, a specific Db2 image is necessary. We have integrated a [dockerfile](https://github.com/ibm-cloud-architecture/vaccine-order-mgr/blob/master/environment/db2image/Dockerfile) and asn configuration to build such image. The details for this configuration are in the [Debezium Db2 connector documentation](https://debezium.io/documentation/reference/connectors/db2.html).
 
-If you want to build this image you can do the following command. The other way is to start all the components with the docker-compose and the ``--build` option.
+If you want to build this image you can do the following command.
 
  ```shell
  # under environment/db2image
  docker build -t ibmcase/db2orders .
  # push the image to a registry
  docker push ibmcase/db2orders
+ ```cd ..
+
+
+ Then start db2 to prepare the database for the first time only.
+
+ ```shell
+ docker-compose -f strimzi-docker-compose.yaml up db2 -d
  ```
 
 In the logs you should see the execution of the [cdcsetup.sh](https://github.com/ibm-cloud-architecture/vaccine-order-mgr/blob/master/environment/db2image/cdcsetup.sh) script which maps to the steps described in [this Debezium note](https://debezium.io/documentation/reference/connectors/db2.html#setting-up-db2)
 
 To run locally we have defined a [docker-compose file](https://github.com/ibm-cloud-architecture/vaccine-order-mgr/blob/master/environment/docker-compose.yaml) with one Kafka broker, one zookeeper, one DB2 container for the persistence, one Kafka Connect with the Debezium code with the DB2 Jdbc driver and one vaccine-order-service to support the demonstration.
 
-To deploy this DB2 image on OpenShift cluster do the following steps:
-
-```shell
-oc login ...
-oc new-project eda-db2
-# Define PV and PVC to persist data
-oc apply -f environment/db2image/db2orders-pvc.yaml
-# Deploy statefulset for the db2 image
-oc apply -f  environment/db2image/statefulset-db2orders.yaml
-
-```
-
-### Build vaccine order mgr service
-
- ```shell
- # be sure to have packaged the order app first with
- mvn package -Dui.deps -Dui.dev -DskipTests
- # build the image
- docker build -f src/main/docker/Dockerfile.jvm -t ibmcase/vaccineorderms  .
- # can also build with docker compose
- cd environment
- # with the option to build the db2, and debezium cdc container images
- docker-compose up -d --build
- # or with pre-existing images coming from dockerhub or your local registry if images already built
- docker-compose up -d
- ```
-
- If you want to start everything in development mode, the vaccine order service is executed via a maven container which starts `quarkus:dev`. Therefore the command is using another compose file: 
-
- ```shell
- cd environment
- docker-compose -f dev-docker-compose.yaml up -d [--build]
- ```
-
- When started for the first time, the DB2 container may take some time to complete the TESTDB creation with the change data capture tables. (To do need to find a health check way to assess db2 is running)
 
 * To validate DB2 settings you can do one of the following troubleshooting commands:
 
 ```shell
 # connect to DB2 server
-docker exec -ti db2 bash
+docker exec -ti db2 bash -c "su - db2inst1"
 # Access the database 
-db2 connect to TESTDB USER DB2INST1
-# use db2inst1 as password
+db2 connect to TESTDB user db2inst1
 # list existing schemas
  db2 "select * from syscat.schemata"
 # list tables
@@ -88,9 +59,50 @@ ORDERUPDATEDEVENT               DB2INST1        T     2020-11-12-01.50.10.796566
 VACCINEORDERENTITY              DB2INST1        T     2020-11-12-01.50.10.874172
 # Verify the content of the current orders
 db2 "select * from vaccineorderentity"
-# List the table for the change data capture
+# List the table for the change data capture schema
 db2 list tables for schema asncdc
 ```
+
+
+* To deploy this DB2 image on OpenShift cluster do the following steps:
+
+```shell
+oc login ...
+oc new-project eda-db2
+# Define PV and PVC to persist data
+oc apply -f environment/db2image/db2orders-pvc.yaml
+# Authorize default user using security constraint
+oc adm policy add-scc-to-user anyuid -z default
+# Deploy statefulset for the db2 image
+oc apply -f  environment/db2image/statefulset-db2orders.yaml
+
+```
+
+### Build vaccine order mgr service
+
+ ```shell
+ # be sure to have packaged the order app first with
+ mvn package -Dui.deps -Dui.dev -D -DskipTests
+ # build the image
+ docker build -f src/main/docker/Dockerfile.jvm -t ibmcase/vaccineorderms  .
+ # can also build with docker compose
+ cd environment
+ # with the option to build the db2, and debezium cdc container images
+ docker-compose -f strimzi-docker-compose.yaml up -d --build
+ # or with pre-existing images coming from dockerhub or your local registry if images already built
+ docker-compose -f strimzi-docker-compose.yaml up -d
+ # As an ALTERNATE you can use confluent kafka
+ ```
+
+ If you want to start everything in development mode, the vaccine order service is executed via a maven container which starts `quarkus:dev`. Therefore the command is using another compose file: 
+
+ ```shell
+ cd environment
+ docker-compose -f dev-docker-compose.yaml up -d [--build]
+ ```
+
+ When started for the first time, the DB2 container may take some time to complete the TESTDB creation with the change data capture tables. (To do need to find a health check way to assess db2 is running)
+
 
 * Define Kafka topics
 
@@ -240,3 +252,14 @@ DB2 may not have finished its setup, specially using docker compose where the im
 #### A DRDA Data Stream Syntax Error was detected.  Reason: 0x2110. ERRORCODE=-4499, SQLSTATE=58009
 
 This error may happen on OpenShift deployment.
+
+
+
+## Git Action
+
+This repository includes a Github [workflow](https://github.com/ibm-cloud-architecture/vaccine-order-mgr/blob/master/.github/workflows/dockerbuild.yaml) to build the app and push a new docker image to public registry. To do that we need to define 4 secrets in the github repository:
+
+* DOCKER_IMAGE_NAME the image name to build. Here it is `vaccineorderms`
+* DOCKER_USERNANE: user to access docker hub
+* DOCKER_PASSWORD: and its password.
+* DOCKER_REPOSITORY for example the organization we use is `ibmcase`

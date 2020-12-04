@@ -1,0 +1,4 @@
+
+export DBPWD=db2inst1
+export SSLJDBCURL="jdbc:db2://db2:50000/TESTDB"
+export DBUSER=db2inst1

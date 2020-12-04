@@ -34,7 +34,7 @@ services:
         ./db2image
     environment:
         LICENSE: accept
-        DBNAME: VACCINEDB
+        DBNAME: TESTDB
         DB2INSTANCE: db2inst1
         TO_CREATE_SAMPLEDB: "false"
         DB2INST1_PASSWORD: db2inst1
@@ -59,6 +59,8 @@ services:
     links:
       - kafka
       - db2
+    depends_on:
+      - orderservice
     environment:
       - BOOTSTRAP_SERVERS=kafka:9092
       - GROUP_ID=1
@@ -85,12 +87,13 @@ services:
       - kafka
     depends_on:
       - db2
+      - kafka
     environment:
       - DBUSER=db2inst1
       - DBPWD=db2inst1
-      - SSLJDBCURL=jdbc:db2://db2:50000/VACCINEDB
+      - SSLJDBCURL=jdbc:db2://db2:50000/TESTDB
       - QUARKUS_HIBERNATE_ORM_SQL_LOAD_SCRIPT=import.sql
-      - QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION=drop-and-create
+      - QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION=update
       - KAFKA_SSL_TRUSTORE_LOCATION=
       - KAFKA_CERT_PATH=
       - KAFKA_CERT_PWD=

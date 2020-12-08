@@ -69,7 +69,7 @@ db2 list tables for schema asncdc
 ```shell
 oc login ...
 oc new-project eda-db2
-# Define PV and PVC to persist data
+# Define PV and PVC to persist data (use 1Gb size)
 oc apply -f environment/db2image/db2orders-pvc.yaml
 # Authorize default user using security constraint
 oc adm policy add-scc-to-user anyuid -z default
@@ -77,6 +77,8 @@ oc adm policy add-scc-to-user anyuid -z default
 oc apply -f  environment/db2image/statefulset-db2orders.yaml
 
 ```
+
+For more information on how to deploy DB2 on OpenShift for development purpose [see this note]().
 
 ### Build vaccine order mgr service
 

@@ -2,11 +2,12 @@
 apiVersion: apps/v1
 metadata:
   name: db2orders
-  namespace: eda-db2
   labels:
     app: db2orders
 spec:
   replicas: 1
+  account:
+    privileged: true
   selector:
     matchLabels:
       app: db2orders
@@ -15,10 +16,6 @@ spec:
       labels:
         app: db2orders
     spec:
-      volumes:
-        - name: db2orders-1
-          persistentVolumeClaim: 
-            claimName: db2orders-pvc
       containers:
         - name: db2orders
           image: ibmcase/db2orders
@@ -48,15 +45,17 @@ spec:
             - containerPort: 60007
               protocol: TCP
           volumeMounts:
-            - name: db2orders-1
+            - name: db2data
               mountPath: /database
-          terminationMessagePolicy: File   
-      restartPolicy: Always
       terminationGracePeriodSeconds: 30
       dnsPolicy: ClusterFirst
       securityContext: {}
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 25%
-      maxSurge: 25%
+  volumeClaimTemplates:
+  - metadata:
+      name: db2data
+    spec:
+      accessModes: ["ReadWriteMany"]
+      storageClassName: "ibmc-file-gold-gid"
+      resources:
+        requests:
+          storage: 100M

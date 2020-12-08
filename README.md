@@ -64,13 +64,11 @@ db2 list tables for schema asncdc
 ```
 
 
-* To deploy this DB2 image on OpenShift cluster do the following steps:
+* To deploy this DB2 image on OpenShift cluster.
 
 ```shell
 oc login ...
 oc new-project eda-db2
-# Define PV and PVC to persist data (use 1Gb size)
-oc apply -f environment/db2image/db2orders-pvc.yaml
 # Authorize default user using security constraint
 oc adm policy add-scc-to-user anyuid -z default
 # Deploy statefulset for the db2 image

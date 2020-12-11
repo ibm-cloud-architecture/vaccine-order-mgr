@@ -70,9 +70,9 @@ jobs:
         DOCKER_P: ${{ secrets.DOCKER_PASSWORD }}
         DOCKER_R: ${{ secrets.DOCKER_REPOSITORY }}
         DOCKER_I: ${{ secrets.DOCKER_IMAGE_NAME }}
-        SSLJDBCURL: "jdbc:db2://db2orders.eda-db2.svc:50000"
-        DBUSER: "db2inst1"
-        DBPWD: "db2inst1"
+        DB_URL: "jdbc:db2://db2orders.eda-db2.svc:50000"
+        DB_USER: "db2inst1"
+        DB_PWD: "db2inst1"
         WORKDIR: .
         DOCKERFILE: src/main/docker/Dockerfile.jvm
         IMAGE_TAG: 0.1.0

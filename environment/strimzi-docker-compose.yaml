@@ -33,13 +33,13 @@ services:
       context:
         ./db2image
     environment:
-        LICENSE: accept
-        DBNAME: TESTDB
-        DB2INSTANCE: db2inst1
-        TO_CREATE_SAMPLEDB: "false"
-        DB2INST1_PASSWORD: db2inst1
-        HADR_ENABLED: "false"
-        STORAGE_DIR: /database
+      LICENSE: accept
+      DBNAME: TESTDB
+      DB2INSTANCE: db2inst1
+      TO_CREATE_SAMPLEDB: "false"
+      DB2INST1_PASSWORD: db2inst1
+      HADR_ENABLED: "false"
+      STORAGE_DIR: /database
     image: ibmcase/db2orders
     ports:
         - 50000:50000
@@ -62,15 +62,15 @@ services:
     depends_on:
       - orderservice
     environment:
-      - BOOTSTRAP_SERVERS=kafka:9092
-      - GROUP_ID=1
-      - CONFIG_STORAGE_TOPIC=src_connect_configs
-      - OFFSET_STORAGE_TOPIC=src_connect_offsets
-      - STATUS_STORAGE_TOPIC=src_connect_statuses
-      - CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE=false
-      - CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE=false
-      - KAFKA_DEBUG=true
-      - DEBUG_SUSPEND_FLAG=n
+      BOOTSTRAP_SERVERS: kafka:9092
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: src_connect_configs
+      OFFSET_STORAGE_TOPIC: src_connect_offsets
+      STATUS_STORAGE_TOPIC=: src_connect_statuses
+      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: false
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: false
+      KAFKA_DEBUG:true
+      DEBUG_SUSPEND_FLAG: n
   orderservice:
     image: ibmcase/vaccineorderms
     container_name: vaccineorderms
@@ -89,10 +89,10 @@ services:
       - db2
       - kafka
     environment:
-      - DB_USER=db2inst1
-      - DB_PWD=db2inst1
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - DB_URL=jdbc:db2://db2:50000/TESTDB
-      - QUARKUS_HIBERNATE_ORM_SQL_LOAD_SCRIPT=import.sql
-      - QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION=update
-      - SHIPMENT_PLAN_TOPIC
+      DB_USER: db2inst1
+      DB_PWD: db2inst1
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      DB_URL: jdbc:db2://db2:50000/TESTDB
+      QUARKUS_HIBERNATE_ORM_SQL_LOAD_SCRIPT: import.sql
+      QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: update
+      SHIPMENT_PLAN_TOPIC: vaccine_shipment_plans

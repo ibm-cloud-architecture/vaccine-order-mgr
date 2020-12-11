@@ -27,7 +27,6 @@ If you want to build this image you can do the following command.
  docker push ibmcase/db2orders
  ```
 
-
  Then start db2 to prepare the database for the first time only.
 
  ```shell
@@ -91,7 +90,6 @@ For more information on how to deploy DB2 on OpenShift for development purpose [
  docker-compose -f strimzi-docker-compose.yaml up -d --build
  # or with pre-existing images coming from dockerhub or your local registry if images already built
  docker-compose -f strimzi-docker-compose.yaml up -d
- # As an ALTERNATE you can use confluent kafka
  ```
 
  If you want to start everything in development mode, the vaccine order service is executed via a maven container which starts `quarkus:dev`. Therefore the command is using another compose file: 
@@ -106,7 +104,7 @@ For more information on how to deploy DB2 on OpenShift for development purpose [
 
 * Define Kafka topics
 
-Some topics are created bu Kafka Connector.
+Some topics are created by the Kafka Connector.
 
 ```shell
 # Under environment folder
@@ -218,7 +216,7 @@ yarn install
 yarn serve
 ```
 
-Use the web browser and developer console to the address [http://localhost:4545](http://localhost:4545). The vue app is configured to proxy to `localhost:8080`.
+Use the web browser and developer console to the address [http://localhost:4545](http://localhost:4545). The Vue app is configured to proxy to `localhost:8080`.
 
 
 ## OpenShift deployment
@@ -234,6 +232,7 @@ To deploy on OpenShift cluster see instructions in the [main documentation](http
 # microservice logs:
 
 ```
+
 ### Connector operations
 
 To delete the CDC connector:
@@ -244,15 +243,13 @@ curl -i -X DELETE  http://localhost:8083/connectors/orderdb-connector
 
 ### Errors
 
-#### com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-1031, SQLSTATE=58031
+#### In Order service: com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-1031, SQLSTATE=58031
 
-DB2 may not have finished its setup, specially using docker compose where the image may be built with Debezium and change data capture settings.
+DB2 may not have finished its setup, specially using docker compose where the image may be built with Debezium and change data capture settings. Restarting the order service later should help.
 
 #### A DRDA Data Stream Syntax Error was detected.  Reason: 0x2110. ERRORCODE=-4499, SQLSTATE=58009
 
-This error may happen on OpenShift deployment.
-
-
+This error may happen on OpenShift deployment and it is linked to a connection to the DB. Verify JDBC URL settings, user, password or network connection. 
 
 ## Git Action
 

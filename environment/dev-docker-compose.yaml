@@ -37,7 +37,7 @@ services:
         DBNAME: TESTDB
         DB2INSTANCE: db2inst1
         TO_CREATE_SAMPLEDB: "false"
-        DB2INST1_PASSWORD: ${DB2INST1_PASSWORD:-db2inst1}
+        DB2INST1_PASSWORD: db2inst1
         HADR_ENABLED: "false"
     image: ibmcase/db2orders
     ports:
@@ -83,11 +83,14 @@ services:
       - kafka
       - db2
     environment:
+      DB_USER: db2inst1
+      DB_PWD: db2inst1
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      DB_URL: jdbc:db2://db2:50000/TESTDB
+      QUARKUS_HIBERNATE_ORM_SQL_LOAD_SCRIPT: import.sql
+      QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: drop-and-create
+      SHIPMENT_PLAN_TOPIC: vaccine_shipment_plans
       QUARKUS_PROFILE: dev
-      DBUSER: db2inst1
-      DBPWD: ${DB2INST1_PASSWORD:-db2inst1}
-      SSLJDBCURL: jdbc:db2://db2:50000/TESTDB
     ports:
       - "8080:8080"
       - "5005:5005"

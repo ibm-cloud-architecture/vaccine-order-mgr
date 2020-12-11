@@ -8,7 +8,7 @@
         "database.port" : "50000",
         "database.user" : "db2inst1",
         "database.password" : "db2inst1",
-        "database.dbname" : "VACCINEDB",
+        "database.dbname" : "TESTDB",
         "database.cdcschema": "ASNCDC",
         "database.history.kafka.bootstrap.servers" : "kafka:9092",
         "database.history.kafka.topic": "db_history_vaccine_orders",

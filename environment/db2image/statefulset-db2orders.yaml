@@ -24,7 +24,7 @@ spec:
             - name: LICENSE
               value: accept
             - name: DBNAME
-              value: VACCINEDB
+              value: TESTDB
             - name: DB2INSTANCE
               value: db2inst1
             - name: DB2INST1_PASSWORD
@@ -32,7 +32,7 @@ spec:
             - name: HADR_ENABLED
               value: "false"
             - name: TO_CREATE_SAMPLEDB
-              value: "false"
+              value: "true"
           ports:
             - containerPort: 22
               protocol: TCP
@@ -58,4 +58,4 @@ spec:
       storageClassName: "ibmc-file-gold-gid"
       resources:
         requests:
-          storage: 100M
+          storage: 20Gi

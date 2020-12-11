@@ -39,9 +39,7 @@ db2 -tvmf /asncdctools/src/asncdctables.sql
 db2 -tvmf /asncdctools/src/asncdcaddremove.sql
 
 
-
-
-# create application table and data
+# create application tables and data
 db2 -tvmf /asncdctools/src/build-tables.sql
 db2 -tvmf /asncdctools/src/startup-agent.sql
 sleep 10

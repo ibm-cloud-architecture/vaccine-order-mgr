@@ -15,6 +15,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.jboss.logging.Logger;
+
 import ibm.gse.eda.vaccines.api.dto.VaccineOrderRequest;
 import ibm.gse.eda.vaccines.domain.OrderService;
 import ibm.gse.eda.vaccines.domain.VaccineOrderEntity;
@@ -26,6 +28,7 @@ import io.smallrye.mutiny.Uni;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class OrderResource {
+    Logger logger = Logger.getLogger("OrderResource");
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
  
     @Inject
@@ -36,6 +39,7 @@ public class OrderResource {
 
     @GET
     public Multi<VaccineOrderRequest> getAllOrders() {
+        logger.info("In get all orders");
         return Multi.createFrom().items(VaccineOrderRequest.fromAll(orderRepository.listAll()).stream());
     }
 
@@ -54,6 +58,7 @@ public class OrderResource {
     @GET
     @Path("/{id}")
     public Uni<VaccineOrderRequest> get(@PathParam("id") Long id) {
+        logger.info("In get order with id: " + id);
         VaccineOrderEntity order = orderRepository.findById(id);
         if (order == null) {
             throw new WebApplicationException("Order with id of " + id + " does not exist.", 404);

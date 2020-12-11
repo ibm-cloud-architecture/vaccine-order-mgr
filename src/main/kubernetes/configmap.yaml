@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vaccine-order-ms-cm
+data:
+  KAFKA_BOOTSTRAP_SERVERS: "light-es-kafka-bootstrap.eventstreams.svc:9092"
+  KAFKA_SSL_PROTOCOL: "TLSv1.2"
+  KAFKA_SSL_TRUSTSTORE_LOCATION: "/deployments/certs/server/ca.p12"
+  KAFKA_SSL_TRUSTSTORE_TYPE: "PKCS12"
+  SHIPMENT_PLAN_TOPIC: "vaccine_shipment_plans"
+ 

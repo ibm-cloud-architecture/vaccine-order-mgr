@@ -1,15 +1,15 @@
 # Vaccine Order Manager event-driven microservice
 
-This service is responsible to manage the Vaccine Order entity. It is done with Smallrye microprofile and reactive messaging with Kafka, hibernate ORM with panache for DB2 database, Vert.x with reactive route, Appsody Quarkus stack and Tekton pipeline.
+This service is responsible to manage the Vaccine Order entity. It is done with Smallrye microprofile and reactive messaging with Kafka, hibernate ORM with panache for DB2 database, Quarkus stack and Tekton pipeline.
 
 For detail implementation approach, design and different deployment model, read explanations of this service in [the main solution documentation](https://ibm-cloud-architecture.github.io/vaccine-solution-main/solution/orderms/).
 
 The goals of this project are:
 
 * Quarkus app with [Debezium outbox](https://debezium.io/documentation/reference/integrations/outbox.html) extension
-* Reactive APP with Mutiny
-* JPA with Panache
-* DB2 settings for change data capture
+* Reactive REST APP with Mutiny
+* JPA with Hibernate and Panache
+* DB2 customized for change data capture
 * Debezium DB2 connector to publish OrderEvents to Kafka topic
 
 ## Build and run locally
@@ -25,7 +25,7 @@ If you want to build this image you can do the following command.
  docker build -t ibmcase/db2orders .
  # push the image to a registry
  docker push ibmcase/db2orders
- ```cd ..
+ ```
 
 
  Then start db2 to prepare the database for the first time only.
@@ -170,7 +170,6 @@ The connector is doing a snapshot of the `DB2INST1.ORDEREVENTS` table to send ex
  {"ID":"lvz4gYs/Q+aSqKmWjVGMXg=="}	
  {"before":null,"after":{"ID":"lvz4gYs/Q+aSqKmWjVGMXg==","AGGREGATETYPE":"VaccineOrderEntity","AGGREGATEID":"21","TYPE":"OrderCreated","TIMESTAMP":1605304440331350,"PAYLOAD":"{\"orderID\":21,\"deliveryLocation\":\"London\",\"quantity\":150,\"priority\":2,\"deliveryDate\":\"2020-12-25\",\"askingOrganization\":\"UK Governement\",\"vaccineType\":\"COVID-19\",\"status\":\"OPEN\",\"creationDate\":\"13-Nov-2020 21:54:00\"}"},"source":{"version":"1.3.0.Final","connector":"db2","name":"vaccine_lot_db","ts_ms":1605304806596,"snapshot":"last","db":"TESTDB","schema":"DB2INST1","table":"ORDEREVENTS","change_lsn":null,"commit_lsn":"00000000:0000150f:0000000000048fca"},"op":"r","ts_ms":1605304806600,"transaction":null}
  ```
-
 
 ### Package the order service with docker
 

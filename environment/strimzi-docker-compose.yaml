@@ -89,12 +89,10 @@ services:
       - db2
       - kafka
     environment:
-      - DBUSER=db2inst1
-      - DBPWD=db2inst1
-      - SSLJDBCURL=jdbc:db2://db2:50000/TESTDB
+      - DB_USER=db2inst1
+      - DB_PWD=db2inst1
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - DB_URL=jdbc:db2://db2:50000/TESTDB
       - QUARKUS_HIBERNATE_ORM_SQL_LOAD_SCRIPT=import.sql
       - QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION=update
-      - KAFKA_SSL_TRUSTORE_LOCATION=
-      - KAFKA_CERT_PATH=
-      - KAFKA_CERT_PWD=
-      - KAFKA_SSL_TRUSTORE_PASSWORD=
+      - SHIPMENT_PLAN_TOPIC

@@ -1,0 +1,76 @@
+allowHostDirVolumePlugin: false
+allowHostIPC: false
+allowHostNetwork: false
+allowHostPID: false
+allowHostPorts: false
+allowPrivilegeEscalation: true
+allowPrivilegedContainer: true
+allowedCapabilities:
+- SYS_RESOURCE
+- IPC_OWNER
+- SYS_NICE
+- CHOWN
+- DAC_OVERRIDE
+- FSETID
+- FOWNER
+- SETGID
+- SETUID
+- SETFCAP
+- SETPCAP
+- SYS_CHROOT
+- KILL
+- AUDIT_WRITE
+apiVersion: security.openshift.io/v1
+defaultAddCapabilities: null
+fsGroup:
+  type: RunAsAny
+groups: []
+kind: SecurityContextConstraints
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"allowHostDirVolumePlugin":false,"allowHostIPC":false,"allowHostNetwork":false,"allowHostPID":false,"allowHostPorts":false,"allowPrivilegedContainer":true,"allowedCapabilities":["SYS_RESOURCE","IPC_OWNER","SYS_NICE","CHOWN","DAC_OVERRIDE","FSETID","FOWNER","SETGID","SETUID","SETFCAP","SETPCAP","SYS_CHROOT","KILL","AUDIT_WRITE"],"apiGroup":"security.openshift.io","apiVersion":"security.openshift.io/v1","fsGroup":{"type":"RunAsAny"},"kind":"SecurityContextConstraints","metadata":{"annotations":{},"name":"db2u-scc","namespace":""},"priority":10,"runAsUser":{"type":"RunAsAny"},"seLinuxContext":{"type":"MustRunAs"},"supplementalGroups":{"type":"RunAsAny"},"version":"v1"}
+  creationTimestamp: 2020-12-10T19:46:55Z
+  generation: 1
+  name: db2u-scc
+  resourceVersion: "68793497"
+  selfLink: /apis/security.openshift.io/v1/securitycontextconstraints/db2u-scc
+  uid: 80485fce-26ea-4b6d-9917-d8aa06661fc9
+priority: 10
+readOnlyRootFilesystem: false
+requiredDropCapabilities: null
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: MustRunAs
+supplementalGroups:
+  type: RunAsAny
+users: []
+volumes:
+- awsElasticBlockStore
+- azureDisk
+- azureFile
+- cephFS
+- cinder
+- configMap
+- csi
+- downwardAPI
+- emptyDir
+- fc
+- flexVolume
+- flocker
+- gcePersistentDisk
+- gitRepo
+- glusterfs
+- iscsi
+- nfs
+- persistentVolumeClaim
+- photonPersistentDisk
+- portworxVolume
+- projected
+- quobyte
+- rbd
+- scaleIO
+- secret
+- storageOS
+- vsphere

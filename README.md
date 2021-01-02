@@ -75,8 +75,6 @@ oc apply -f  environment/db2image/statefulset-db2orders.yaml
 
 ```
 
-For more information on how to deploy DB2 on OpenShift for development purpose [see this note]().
-
 ### Build vaccine order mgr service
 
  ```shell

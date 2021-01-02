@@ -9,7 +9,7 @@
       >
         <template v-slot:top>
           <v-toolbar flat color="white">
-            <v-toolbar-title>Orders</v-toolbar-title>
+            <v-toolbar-title>Shipment Plans</v-toolbar-title>
           </v-toolbar>
         </template>
       </v-data-table>

@@ -47,9 +47,12 @@ spec:
           volumeMounts:
             - name: db2data
               mountPath: /database
+          securityContext:
+            allowPrivilegeEscalation: true
       terminationGracePeriodSeconds: 30
       dnsPolicy: ClusterFirst
-      securityContext: {}
+      securityContext:
+        runAsNonRoot: false
   volumeClaimTemplates:
   - metadata:
       name: db2data

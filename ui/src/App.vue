@@ -11,9 +11,7 @@
           width="40"
         />
       </div>
-      <v-toolbar-title
-        >Vaccine Order Service Simulator - v 0.0.1
-      </v-toolbar-title>
+      <v-toolbar-title>{{ title }} - {{ version }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn to="/" text>
         <v-icon left>mdi-home</v-icon>
@@ -24,8 +22,12 @@
         Orders
       </v-btn>
       <v-btn to="/plans" text>
-        <v-icon left>mdi-store</v-icon>
+        <v-icon left>mdi-hospital</v-icon>
         Shipment Plans
+      </v-btn>
+      <v-btn to="/transportation" text>
+        <v-icon left>mdi-train</v-icon>
+        transportation
       </v-btn>
       <v-btn
         href="https://github.com/ibm-cloud-architecture/vaccine-order-mgr"
@@ -45,12 +47,19 @@
 </template>
 
 <script>
+
 export default {
   name: "App",
-  data: () => ({
-    //
-  }),
+  data: () => {
+    
+      return {
+        version:  process.env.VUE_APP_VERSION, 
+        title: process.env.VUE_APP_TITLE
+      }   
+  },
 };
+console.log(process.env);
+
 </script>
 <style>
 #app {

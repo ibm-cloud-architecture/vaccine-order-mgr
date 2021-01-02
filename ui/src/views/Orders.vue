@@ -79,22 +79,22 @@
                       </v-col>
                     </v-row>
                     <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field
-                        v-model="editedItem.quantity"
-                        label="Quantity"
-                        required
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-slider
-                       label="Priority"
-                        v-model="editedItem.priority"
-                        max="5"
-                        min="1"
-                        thumb-label="always"
-                      ></v-slider>
-                    </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field
+                          v-model="editedItem.quantity"
+                          label="Quantity"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-slider
+                          label="Priority"
+                          v-model="editedItem.priority"
+                          max="5"
+                          min="1"
+                          thumb-label="always"
+                        ></v-slider>
+                      </v-col>
                       <v-col cols="12" sm="6" md="4">
                         <v-select
                           :items="vaccineTypes"
@@ -102,7 +102,7 @@
                           label="Vaccine Type"
                         ></v-select>
                       </v-col>
-                     </v-row>
+                    </v-row>
                   </v-container>
                 </v-card-text>
                 <v-card-actions>
@@ -120,8 +120,7 @@
           <v-icon small class="mr-2" @click="editItem(item)">
             mdi-pencil
           </v-icon>
-                <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
-    
+          <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
         </template>
       </v-data-table>
     </v-col>
@@ -145,16 +144,16 @@ export default {
       deliveryLocation: "",
       priority: 2,
       quantity: 150,
-      type: "COVID-19"
+      type: "COVID-19",
     },
     defaultItem: {
       id: -1,
-       askingOrganization: "",
+      askingOrganization: "",
       deliveryDate: new Date().toISOString().substr(0, 10),
       deliveryLocation: "",
       priority: 2,
       quantity: 150,
-       type: "COVID-19"
+      type: "COVID-19",
     },
     dialog: false,
     menu: false,
@@ -165,7 +164,7 @@ export default {
       { text: "Priority", value: "priority", sortable: true },
       { text: "Quantity", value: "quantity", sortable: true },
       { text: "Status", value: "status" },
-       { text: "Actions", value: "actions", sortable: false },
+      { text: "Actions", value: "actions", sortable: false },
     ],
   }),
   computed: {
@@ -190,8 +189,8 @@ export default {
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
-    deleteItem(item){
-        console.log(item)
+    deleteItem(item) {
+      console.log(item);
     },
     close() {
       this.dialog = false;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Welcome to the Vaccine order Demonstration</h3>
+    <h3>Welcome to the {{ title }} {{ version }}</h3>
     <div class="outer">
       
       <div class="inner">
@@ -36,5 +36,11 @@
 <script>
 export default {
   name: "Home",
+  data: () => { 
+      return {
+        version: process.env.VUE_APP_VERSION, 
+        title: process.env.VUE_APP_TITLE 
+      }
+  }
 };
 </script>

@@ -27,72 +27,39 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-  db2:
-    container_name: db2
-    build:
-      context:
-        ./db2image
+  postgresql:
+    container_name: postgres
+    hostname: postgres
+    image: postgres
     environment:
-      LICENSE: accept
-      DBNAME: TESTDB
-      DB2INSTANCE: db2inst1
-      TO_CREATE_SAMPLEDB: "false"
-      DB2INST1_PASSWORD: db2inst1
-      HADR_ENABLED: "false"
-      STORAGE_DIR: /database
-    image: ibmcase/db2orders
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pgpwd
+      POSTGRES_DB: ordersdb
     ports:
-        - 50000:50000
-        - 55000:55000
-    privileged: true
+      - "5432:5432"
     volumes:
-        - ./db2data:/database
-  connect:
-    image: ibmcase/cdc-connector
-    container_name: cdc-connector
-    build:
-      context:
-        ./cdc
-    ports:
-      - 8083:8083
-      - 5006:5005
-    links:
-      - kafka
-      - db2
-    depends_on:
-      - orderservice
-    environment:
-      BOOTSTRAP_SERVERS: kafka:9092
-      GROUP_ID: 1
-      CONFIG_STORAGE_TOPIC: src_connect_configs
-      OFFSET_STORAGE_TOPIC: src_connect_offsets
-      STATUS_STORAGE_TOPIC=: src_connect_statuses
-      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: false
-      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: false
-      KAFKA_DEBUG:true
-      DEBUG_SUSPEND_FLAG: n
+      - ./data:/var/lib/postgresql/data/
   orderservice:
     image: ibmcase/vaccineorderms
     container_name: vaccineorderms
     build:
       context:
-        ../
+        ../../
       dockerfile:
         ./src/main/docker/Dockerfile.jvm
     ports:
       - 8080:8080
       - 5005:5005
     links:
-      - db2
+      - postgresql
       - kafka
     depends_on:
-      - db2
+      - postgresql
       - kafka
     environment:
-      DB_USER: db2inst1
-      DB_PWD: db2inst1
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      DB_URL: jdbc:db2://db2:50000/TESTDB
-      QUARKUS_HIBERNATE_ORM_SQL_LOAD_SCRIPT: import.sql
-      QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: update
       SHIPMENT_PLAN_TOPIC: vaccine_shipment_plans
+      QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: drop-and-create
+      VUE_APP_TRANSPORTATION_URL: "http://vaccine-transport-simulator-vaccine.gse-eda-2020-10-3-0143c5dd31acd8e030a1d6e0ab1380e3-0000.us-east.containers.appdomain.cloud/transportation"
+      VUE_APP_VERSION: 0.0.5
+      VUE_APP_TITLE: "Vaccine Order Manager"

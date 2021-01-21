@@ -21,7 +21,7 @@ public class OrderUpdatedEvent implements ExportedEvent<String, String> {
     @Id
     public long id;
     @Column(length=2046)
-    public String order;
+    public String payload;
     public Instant timestamp;
     
     public OrderUpdatedEvent(){}
@@ -29,10 +29,10 @@ public class OrderUpdatedEvent implements ExportedEvent<String, String> {
     public OrderUpdatedEvent(long id, JsonNode order) {
         this.id = id;
         try {
-            this.order = mapper.writeValueAsString(order);
+            this.payload = mapper.writeValueAsString(order);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            this.order = "";
+            this.payload = "";
         }
         this.timestamp = Instant.now();
     }
@@ -63,7 +63,7 @@ public class OrderUpdatedEvent implements ExportedEvent<String, String> {
 
     @Override
     public String getPayload() {
-        return order;
+        return payload;
     }
 
     @Override

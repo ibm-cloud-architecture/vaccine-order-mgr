@@ -1,13 +1,11 @@
 package ibm.gse.eda.vaccines.domain;
 
-import java.time.LocalDate;
-
 import javax.persistence.Entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 @Entity
-public class VaccineOrderEntity extends PanacheEntity {
+public class VaccineOrderEntity extends PanacheEntity{
     public String askingOrganization;
     public String deliveryLocation;
     public String vaccineType;

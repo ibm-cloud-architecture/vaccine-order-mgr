@@ -3,9 +3,11 @@ kind: ConfigMap
 metadata:
   name: vaccine-order-ms-cm
 data:
-  KAFKA_BOOTSTRAP_SERVERS: "light-es-kafka-bootstrap.eventstreams.svc:9092"
+  KAFKA_BOOTSTRAP_SERVERS: "gse-eda-dev-kafka-bootstrap.eventstreams.svc:9092"
   KAFKA_SSL_PROTOCOL: "TLSv1.2"
   KAFKA_SSL_TRUSTSTORE_LOCATION: "/deployments/certs/server/ca.p12"
   KAFKA_SSL_TRUSTSTORE_TYPE: "PKCS12"
   SHIPMENT_PLAN_TOPIC: "vaccine_shipment_plans"
+  VUE_APP_TRANSPORTATION_URL: "http://vaccine-transport-simulator-vaccine.gse-eda-2020-10-3-0143c5dd31acd8e030a1d6e0ab1380e3-0000.us-east.containers.appdomain.cloud/transportation"
+
  

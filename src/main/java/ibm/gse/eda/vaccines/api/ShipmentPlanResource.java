@@ -20,7 +20,7 @@ import io.smallrye.mutiny.Multi;
 public class ShipmentPlanResource {
     
     @Inject
-    private ShipmentPlanProcessor shipmentPlan;
+    protected ShipmentPlanProcessor shipmentPlan;
     //Publisher<ShipmentPlan> shipmentPlan;
 
     @GET

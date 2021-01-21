@@ -41,4 +41,5 @@ environment/db2data/
 scripts/setenv.sh
 ui/node_modules/
 src/main/kubernetes/*secrets.yaml
-truststore.p12
+**.p12
+environment/data/

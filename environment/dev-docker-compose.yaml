@@ -2,6 +2,7 @@ version: '3.1'
 services:
   zookeeper:
     image: strimzi/kafka:latest-kafka-2.6.0
+    container_name: zookeeper
     command: [
       "sh", "-c",
       "bin/zookeeper-server-start.sh config/zookeeper.properties"
@@ -26,67 +27,33 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "orders:1:1"
-  db2:
-    container_name: db2
-    build:
-      context:
-        ./db2image
+  postgresql:
+    container_name: postgres
+    hostname: postgres
+    image: postgres
     environment:
-        LICENSE: accept
-        DBNAME: TESTDB
-        DB2INSTANCE: db2inst1
-        TO_CREATE_SAMPLEDB: "false"
-        DB2INST1_PASSWORD: db2inst1
-        HADR_ENABLED: "false"
-    image: ibmcase/db2orders
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pgpwd
+      POSTGRES_DB: ordersdb
     ports:
-        - 50000:50000
-        - 55000:55000
-    privileged: true
+      - "5432:5432"
     volumes:
-        - ./db2data:/database
-  connect:
-    image: ibmcase/cdc-connector
-    container_name: cdc-connector
-    build:
-      context:
-        ./cdc
-    ports:
-      - 8083:8083
-      - 5006:5005
-    links:
-      - kafka
-      - db2
-    environment:
-      - DEBEZIUM_VERSION=1.3
-      - BOOTSTRAP_SERVERS=kafka:9092
-      - GROUP_ID=1
-      - CONFIG_STORAGE_TOPIC=src_connect_configs
-      - OFFSET_STORAGE_TOPIC=src_connect_offsets
-      - STATUS_STORAGE_TOPIC=src_connect_statuses
-      - CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE=false
-      - CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE=false
-      - KAFKA_DEBUG=true
-      - DEBUG_SUSPEND_FLAG=n
+      - ./data:/var/lib/postgresql/data/
   maven:
     image: maven
     container_name: orderms
     volumes:
-      - "../:/app"
+      - "../../:/app"
       - "~/.m2:/root/.m2"
     depends_on:
       - kafka
-      - db2
+      - postgresql
     hostname: orderms
     links:
       - kafka
-      - db2
+      - postgresql
     environment:
-      DB_USER: db2inst1
-      DB_PWD: db2inst1
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      DB_URL: jdbc:db2://db2:50000/TESTDB
       QUARKUS_HIBERNATE_ORM_SQL_LOAD_SCRIPT: import.sql
       QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: drop-and-create
       SHIPMENT_PLAN_TOPIC: vaccine_shipment_plans
@@ -96,4 +63,3 @@ services:
       - "5005:5005"
     working_dir: /app
     command: "./mvnw quarkus:dev"
-  

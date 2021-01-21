@@ -12,8 +12,6 @@ import javax.ws.rs.WebApplicationException;
 
 import org.jboss.logging.Logger;
 
-import ibm.gse.eda.vaccines.domain.events.OrderCreatedEvent;
-import ibm.gse.eda.vaccines.domain.events.OrderUpdatedEvent;
 import ibm.gse.eda.vaccines.infrastructure.OrderRepository;
 import io.debezium.outbox.quarkus.ExportedEvent;
 
@@ -64,7 +62,7 @@ public class OrderService {
         orderEntity.priority = order.priority;
         orderEntity.deliveryDate = order.deliveryDate;
 
-        event.fire(OrderUpdatedEvent.of(orderEntity));
+        //event.fire(OrderUpdatedEvent.of(orderEntity));
         orderRepository.persistAndFlush(orderEntity);
         return orderEntity;
     }

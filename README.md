@@ -2,15 +2,14 @@
 
 This service is responsible to manage the Vaccine Order entity. It is done with Smallrye microprofile and reactive messaging with Kafka, hibernate ORM with panache for DB2 database, Quarkus stack and Tekton pipeline.
 
-For detail implementation approach, design and different deployment model, read explanations of this service in [the main solution documentation](https://ibm-cloud-architecture.github.io/vaccine-solution-main/solution/orderms/).
+Visit detail implementation approach, design and different deployment model, read explanations of this service in [the main solution documentation](https://ibm-cloud-architecture.github.io/vaccine-solution-main/solution/orderms/).
 
 The goals of this project are:
 
 * Quarkus app with [Debezium outbox](https://debezium.io/documentation/reference/integrations/outbox.html) extension
 * Reactive REST APP with Mutiny
 * JPA with Hibernate and Panache
-* DB2 customized for change data capture
-* Debezium DB2 connector to publish OrderEvents to Kafka topic
+* Debezium Postgres connector to publish OrderEvents to Kafka topic
 
 ## Build and run locally
 

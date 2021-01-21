@@ -4,7 +4,9 @@ import java.time.Instant;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -21,7 +23,7 @@ public class OrderCreatedEvent implements ExportedEvent<String, String> {
     @Id
     public long id;
     @Column(length=2046)
-    public String order;
+    public String payload;
     public Instant timestamp;
     
     public OrderCreatedEvent(){}
@@ -29,10 +31,10 @@ public class OrderCreatedEvent implements ExportedEvent<String, String> {
     public OrderCreatedEvent(long id, JsonNode order) {
         this.id = id;
         try {
-            this.order = mapper.writeValueAsString(order);
+            this.payload = mapper.writeValueAsString(order);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            this.order = "";
+            this.payload = "";
         }
         this.timestamp = Instant.now();
     }
@@ -63,7 +65,7 @@ public class OrderCreatedEvent implements ExportedEvent<String, String> {
 
     @Override
     public String getPayload() {
-        return order;
+        return payload;
     }
 
     @Override
